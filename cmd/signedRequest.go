@@ -97,7 +97,9 @@ var signedRequestCmd = &cobra.Command{
 			fmt.Printf("error reading body: %v\n", err)
 			return
 		}
-		fmt.Printf("%v", string(respData))
+		if !debug {
+			fmt.Printf("%v", string(respData))
+		}
 		return
 	},
 }
