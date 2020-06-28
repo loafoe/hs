@@ -37,9 +37,9 @@ import (
 
 // signedRequestCmd represents the signedRequest command
 var signedRequestCmd = &cobra.Command{
-	Use:   "signedRequest",
-	Short: "Dp a signed request",
-	Long: `Do a request that is protected by the HSDP API signing algorithm`,
+	Use:   "signed-request",
+	Short: "Perform a signed request",
+	Long: `Perform a request that is protected by the HSDP API signing algorithm`,
 	Aliases: []string{"sr"},
 	Run: func(cmd *cobra.Command, args []string) {
 		key, _ := cmd.Flags().GetString("key")
