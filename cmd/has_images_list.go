@@ -23,22 +23,43 @@ package cmd
 
 import (
 	"fmt"
-
+	"github.com/philips-software/go-hsdp-api/has"
 	"github.com/spf13/cobra"
+	"net/http"
 )
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "List available has images",
+	Long: `Lists the available list of HAS machine images`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		url, _ := cmd.PersistentFlags().GetString("url")
+		orgID, _ := cmd.PersistentFlags().GetString("orgid")
+		if url == "" {
+			fmt.Printf("need a HAS backend URL\n")
+			return
+		}
+		if orgID == "" {
+			fmt.Printf("need an organization ID\n")
+			return
+		}
+		client, err := has.NewClient(http.DefaultClient, &has.Config{
+			HASURL: url,
+			OrgID: orgID,
+		})
+		if err != nil {
+			fmt.Printf("error initializing HAS client: %v\n", err)
+			return
+		}
+		images, _, err := client.Images.GetImages()
+		if err != nil {
+			fmt.Printf("error retrieving image list: %v\n", err)
+			return
+		}
+		for _, image := range *images {
+			fmt.Printf("%s -- %s\n", image.ID, image.Name)
+		}
 	},
 }
 

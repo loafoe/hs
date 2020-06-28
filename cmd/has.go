@@ -49,7 +49,8 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// hasCmd.PersistentFlags().String("foo", "", "A help for foo")
+	hasCmd.PersistentFlags().StringP("url", "u", "", "The HAS backend serer to use")
+	hasCmd.PersistentFlags().StringP("orgid", "o", "", "The organization ID (tenant) to use")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
