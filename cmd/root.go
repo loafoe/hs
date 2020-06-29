@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
+	"path/filepath"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -33,6 +34,10 @@ import (
 var cfgFile string
 var debug bool
 var debugLog string
+var clientID string
+var clientSecret string
+var workspace = "default"
+var workspaceRoot string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -82,6 +87,12 @@ func initConfig() {
 			os.Exit(1)
 		}
 
+		workspaceRoot = filepath.Join(home, ".hs", "workspaces", workspace)
+		err = os.MkdirAll(workspaceRoot, 0700)
+		if err != nil {
+			fmt.Printf("workspace directory error: %v\n", err)
+			os.Exit(1)
+		}
 		// Search config in home directory with name ".hs" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".hs")
