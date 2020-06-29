@@ -1,4 +1,4 @@
-# hs - handy scripter
+# hs - healthy scripter
 hs is a command line interface (CLI) to interact with various HSDP services.
 It primarily uses [go-hsdp-api](https://github.com/philips-software/go-hsdp-api) so whatever functionality is available from that library and makes sense to expose via CLI will be considered.
 
