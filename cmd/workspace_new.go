@@ -23,62 +23,35 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/philips-software/go-hsdp-api/has"
-	"github.com/philips-software/go-hsdp-api/iam"
+
 	"github.com/spf13/cobra"
-	"net/http"
 )
 
-// listCmd represents the list command
-var imageListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List available has images",
-	Long: `Lists the available list of HAS machine images`,
+// newCmd represents the new command
+var newCmd = &cobra.Command{
+	Use:   "new",
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		url, _ := cmd.PersistentFlags().GetString("url")
-		orgID, _ := cmd.PersistentFlags().GetString("orgid")
-		if url == "" {
-			fmt.Printf("need a HAS backend URL\n")
-			return
-		}
-		if orgID == "" {
-			fmt.Printf("need an organization ID\n")
-			return
-		}
-		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-		})
-		if err != nil {
-			fmt.Printf("error initializing IAM client: %v\n", err)
-		}
-		client, err := has.NewClient(iamClient, &has.Config{
-			HASURL: url,
-			OrgID: orgID,
-		})
-		if err != nil {
-			fmt.Printf("error initializing HAS client: %v\n", err)
-			return
-		}
-		images, _, err := client.Images.GetImages()
-		if err != nil {
-			fmt.Printf("error retrieving image list: %v\n", err)
-			return
-		}
-		for _, image := range *images {
-			fmt.Printf("%s -- %s\n", image.ID, image.Name)
-		}
+		fmt.Println("new called")
 	},
 }
 
 func init() {
-	imagesCmd.AddCommand(imageListCmd)
+	workspaceCmd.AddCommand(newCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// newCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// newCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
