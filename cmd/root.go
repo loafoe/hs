@@ -38,6 +38,8 @@ var clientID string
 var clientSecret string
 var workspace = "default"
 var workspaceRoot string
+var workspaceRegion string = "us-east"
+var workspaceEnvironment string = ""
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

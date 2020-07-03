@@ -99,6 +99,9 @@ to quickly create a Cobra application.`,
 			os.Exit(1)
 		}
 		fmt.Printf("logged in as: %s\n", introspect.Username)
+		fmt.Printf("access_token: %s\n", iamClient.Token())
+		fmt.Printf("refresh_token: %s\n", iamClient.RefreshToken())
+
 	},
 }
 
