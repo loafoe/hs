@@ -23,35 +23,59 @@ package cmd
 
 import (
 	"fmt"
-
+	"github.com/philips-software/go-hsdp-api/iron"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
-// registerCmd represents the register command
-var registerCmd = &cobra.Command{
-	Use:   "register",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+// ironRegisterCmd represents the register command
+var ironRegisterCmd = &cobra.Command{
+	Use:   "register some/image[:tag]",
+	Short: "Register a docker image as an Iron code",
+	Long: `Registers a docker image as an Iron code`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("register called")
+		config, err := readIronConfig()
+		if err != nil {
+			fmt.Printf("error reading iron config: %v\n", err)
+			return
+		}
+		if len(config.ClusterInfo) == 0 {
+			fmt.Printf("missing required cluster info in config")
+		}
+		config.Debug = debug
+		client, err := iron.NewClient(config)
+		if err != nil {
+			fmt.Printf("error configuring iron client: %v\n", err)
+			return
+		}
+		name := strings.Split(args[0], ":")[0]
+		code, resp, err := client.Codes.CreateOrUpdateCode(iron.Code{
+			Name: name,
+			Image: args[0],
+		})
+		if err != nil {
+			fmt.Printf("error registering code: %v\n", err)
+			return
+		}
+		if code != nil && code.Name != "" {
+			fmt.Printf("registered %s, revision %d\n", code.Name, code.Rev)
+		} else {
+			fmt.Printf("unexpected error registering code: %d\n", resp.StatusCode)
+		}
+		fmt.Printf("\n")
 	},
 }
 
 func init() {
-	codesCmd.AddCommand(registerCmd)
+	codesCmd.AddCommand(ironRegisterCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// registerCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// ironRegisterCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// registerCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// ironRegisterCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
