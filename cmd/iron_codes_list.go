@@ -23,6 +23,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/cheynewallace/tabby"
+	"github.com/philips-software/go-hsdp-api/iron"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -38,7 +41,32 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		config, err := readIronConfig()
+		if err != nil {
+			fmt.Printf("error reading iron config: %v\n", err)
+			return
+		}
+		client, err := iron.NewClient(config)
+		if err != nil {
+			fmt.Printf("error configuring iron client: %v\n", err)
+			return
+		}
+		fmt.Printf("retrieving codes...\n\n")
+		codes, _, err := client.Codes.GetCodes()
+		if err != nil {
+			fmt.Printf("error getting codes: %v\n", err)
+			return
+		}
+		if codes == nil {
+			fmt.Printf("no codes found.\n")
+			return
+		}
+		t := tabby.New()
+		t.AddHeader("code name", "revisions", "last modified")
+		for _, code := range *codes {
+			t.AddLine(code.Name, code.Rev, code.LatestChange.Format(time.RFC3339))
+		}
+		t.Print()
 	},
 }
 
