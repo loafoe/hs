@@ -25,21 +25,14 @@ import (
 	"fmt"
 	"github.com/cheynewallace/tabby"
 	"github.com/philips-software/go-hsdp-api/iron"
-	"time"
-
 	"github.com/spf13/cobra"
 )
 
 // ironTasksListCmd represents the list command
-var listCmd = &cobra.Command{
+var ironTasksListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "List tasks on Iron",
+	Long: `Lists task on Iron`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config, err := readIronConfig()
 		if err != nil {
@@ -51,27 +44,59 @@ to quickly create a Cobra application.`,
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
-		fmt.Printf("retrieving codes...\n\n")
-		codes, _, err := client.Codes.GetCodes()
+		fmt.Printf("retrieving tasks...\n\n")
+		tasks, _, err := client.Tasks.GetTasks()
 		if err != nil {
-			fmt.Printf("error getting codes: %v\n", err)
+			fmt.Printf("error getting tasks: %v\n", err)
 			return
 		}
-		if codes == nil {
-			fmt.Printf("no codes found.\n")
+		if tasks == nil {
+			fmt.Printf("no tasks found.\n")
 			return
 		}
 		t := tabby.New()
-		t.AddHeader("code name", "revisions", "last modified")
-		for _, code := range *codes {
-			t.AddLine(code.Name, code.Rev, code.LatestChange.Format(time.RFC3339))
+		type taskStats struct {
+			Queued int
+			Preparing int
+			Timeout int
+			Running int
+			Cancelled int
+			Error int
+			Completed int
+		}
+		taskEntry := map[string]taskStats{}
+
+		t.AddHeader("code name", "queued", "preparing", "running", "error", "cancelled", "timeout", "complete")
+		for _, task := range *tasks {
+			entry := taskStats{}
+			if existing, found := taskEntry[task.CodeName]; found {
+				entry = existing
+			}
+			switch task.Status {
+			case "preparing":
+				entry.Preparing++
+			case "timeout":
+				entry.Timeout++
+			case "cancelled":
+				entry.Cancelled++
+			case "complete":
+				entry.Completed++
+			case "error":
+				entry.Error++
+			case "queued":
+				entry.Queued++
+			}
+			taskEntry[task.CodeName] = entry
+		}
+		for code, stats := range taskEntry {
+			t.AddLine(code, stats.Queued, stats.Preparing, stats.Running, stats.Error, stats.Cancelled, stats.Timeout, stats.Completed)
 		}
 		t.Print()
 	},
 }
 
 func init() {
-	codesCmd.AddCommand(listCmd)
+	tasksCmd.AddCommand(ironTasksListCmd)
 
 	// Here you will define your flags and configuration settings.
 

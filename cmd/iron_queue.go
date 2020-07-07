@@ -31,8 +31,8 @@ import (
 // queueCmd represents the queue command
 var queueCmd = &cobra.Command{
 	Use:   "queue <code>",
-	Short: "Queue a task on a cluster",
-	Long: `Queues a task on a cluster`,
+	Short: "Queues tasks on a cluster",
+	Long: `Queues tasks on a cluster`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
