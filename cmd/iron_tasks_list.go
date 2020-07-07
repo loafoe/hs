@@ -26,6 +26,7 @@ import (
 	"github.com/cheynewallace/tabby"
 	"github.com/philips-software/go-hsdp-api/iron"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 // ironTasksListCmd represents the list command
@@ -44,7 +45,7 @@ var ironTasksListCmd = &cobra.Command{
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
-		fmt.Printf("retrieving tasks...\n\n")
+		fmt.Printf("retrieving tasks and schedules...\n\n")
 		tasks, _, err := client.Tasks.GetTasks()
 		if err != nil {
 			fmt.Printf("error getting tasks: %v\n", err)
@@ -92,11 +93,32 @@ var ironTasksListCmd = &cobra.Command{
 			t.AddLine(code, stats.Queued, stats.Preparing, stats.Running, stats.Error, stats.Cancelled, stats.Timeout, stats.Completed)
 		}
 		t.Print()
+		fmt.Printf("\n")
+		schedules, _, err := client.Schedules.GetSchedules()
+		if err != nil {
+			fmt.Printf("error retrieving schedules: %v\n", err)
+			return
+		}
+		t = tabby.New()
+		t.AddHeader("schedule", "every", "status", "last", "next", "runs")
+		for _, s := range *schedules {
+			t.AddLine(s.CodeName,
+				s.RunEvery,
+				s.Status,
+				s.LastRunTime.Format(time.RFC3339),
+				s.NextStart.Format(time.RFC3339),
+				s.RunTimes)
+		}
+		t.Print()
+		if len(*schedules) == 0 {
+			fmt.Printf("no scheduled tasks found\n")
+		}
+		fmt.Printf("\n")
 	},
 }
 
 func init() {
-	tasksCmd.AddCommand(ironTasksListCmd)
+	ironTasksCmd.AddCommand(ironTasksListCmd)
 
 	// Here you will define your flags and configuration settings.
 
