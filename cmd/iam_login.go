@@ -37,18 +37,20 @@ import (
 // dockerLoginCmd represents the login command
 var iamLoginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Log into HSDP IAM using browser authentication flow",
+	Long: `Log into HSDP IAM using browser authentication flow`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if clientID == "" || clientSecret == "" {
+			fmt.Printf("this feature only works with official binaries.\n")
+			return
+		}
+		region, _ := cmd.PersistentFlags().GetString("region")
+		environment, _ := cmd.PersistentFlags().GetString("environment")
+
 		// IAM
 		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-			IAMURL: "https://iam-client-test.us-east.philips-healthsuite.com",
-			IDMURL: "https://idm-client-test.us-east.philips-healthsuite.com",
+			Region: region,
+			Environment: environment,
 			OAuth2ClientID: clientID,
 			OAuth2Secret: clientSecret,
 			Debug: true,
@@ -112,9 +114,8 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// dockerLoginCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// dockerLoginCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	//iamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

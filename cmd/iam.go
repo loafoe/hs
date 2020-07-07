@@ -22,22 +22,16 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 )
 
 // iamCmd represents the iam command
 var iamCmd = &cobra.Command{
 	Use:   "iam",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Interact with HSDP IAM resources",
+	Long: `Interact with HSDP IAM resources`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("to login use `iam login`\n")
+		_ = cmd.Help()
 	},
 }
 
@@ -49,6 +43,8 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// iamCmd.PersistentFlags().String("foo", "", "A help for foo")
+	iamCmd.PersistentFlags().StringP("region", "r", "us-east", "HSDP region to use (default: us-east)")
+	iamCmd.PersistentFlags().StringP("environment", "e", "client-test", "HSDP environment to use (default: client-test)")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

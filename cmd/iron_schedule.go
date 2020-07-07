@@ -35,7 +35,7 @@ var scheduleCmd = &cobra.Command{
 	Long: `Schedule a task on a cluster`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Printf("must specify code to schedule\n")
+			_ = cmd.Help()
 			return
 		}
 		code := args[0]

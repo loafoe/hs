@@ -22,23 +22,16 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // hasCmd represents the has command
 var hasCmd = &cobra.Command{
 	Use:   "has",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Manage Hosted Appstream resources",
+	Long: `Manage Hosted Appstream resources`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("has called")
+		_ = cmd.Help()
 	},
 }
 
@@ -49,7 +42,7 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	hasCmd.PersistentFlags().StringP("url", "u", "", "The HAS backend serer to use")
+	hasCmd.PersistentFlags().StringP("url", "u", "", "The HAS backend server to use")
 	hasCmd.PersistentFlags().StringP("orgid", "o", "", "The organization ID (tenant) to use")
 
 	// Cobra supports local flags which will only run when this command

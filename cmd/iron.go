@@ -38,7 +38,7 @@ var ironCmd = &cobra.Command{
 	Short: "Interaction with HSPD IronIO",
 	Long: `This is a replacement of the iron CLI with a focus on dockerized tasks.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("use `queue` or `schedule`")
+		_ = cmd.Help()
 	},
 }
 

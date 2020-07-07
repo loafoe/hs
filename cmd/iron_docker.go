@@ -22,18 +22,16 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // dockerCmd represents the docker command
 var dockerCmd = &cobra.Command{
 	Use:   "docker login",
-	Short: "iron docker related commands",
-	Long: `iron docker related commands`,
+	Short: "Regiser docker credentials with Iron",
+	Long: `Register docker credentials with Iron`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("usage: hs iron docker login")
+		_ = cmd.Help()
 	},
 }
 

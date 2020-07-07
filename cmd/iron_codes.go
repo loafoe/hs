@@ -22,45 +22,29 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-	"github.com/philips-software/go-hsdp-api/iron"
-
 	"github.com/spf13/cobra"
 )
 
-// queueCmd represents the queue command
-var queueCmd = &cobra.Command{
-	Use:   "queue <code>",
-	Short: "Queue a task on a cluster",
-	Long: `Queues a task on a cluster`,
+// codesCmd represents the codes command
+var codesCmd = &cobra.Command{
+	Use:   "codes",
+	Short: "Manage registration of codes with Iron",
+	Long: `Manage registration of codes with Iron`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			_ = cmd.Help()
-		}
-		config, err := readIronConfig()
-		if err != nil {
-			fmt.Printf("error reading iron config: %v\n", err)
-			return
-		}
-		client, err := iron.NewClient(config)
-		if err != nil {
-			fmt.Printf("error configuring iron client: %v\n", err)
-			return
-		}
-		client.Close()
+		_ = cmd.Help()
 	},
 }
 
 func init() {
-	ironCmd.AddCommand(queueCmd)
+	ironCmd.AddCommand(codesCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// queueCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// codesCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// queueCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// codesCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

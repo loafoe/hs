@@ -22,23 +22,16 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
 // imagesCmd represents the images command
 var imagesCmd = &cobra.Command{
 	Use:   "images",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Manage HAS images",
+	Long: `Manage HAS images`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("images called")
+		_ = cmd.Help()
 	},
 }
 
