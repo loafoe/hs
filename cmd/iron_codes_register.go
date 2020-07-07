@@ -34,6 +34,10 @@ var ironRegisterCmd = &cobra.Command{
 	Short: "Register a docker image as an Iron code",
 	Long: `Registers a docker image as an Iron code`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			_ = cmd.Help()
+			return
+		}
 		config, err := readIronConfig()
 		if err != nil {
 			fmt.Printf("error reading iron config: %v\n", err)
