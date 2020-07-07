@@ -32,6 +32,7 @@ import (
 // ironTasksListCmd represents the list command
 var ironTasksListCmd = &cobra.Command{
 	Use:   "list",
+	Aliases: []string{"l"},
 	Short: "List tasks on Iron",
 	Long: `Lists task on Iron`,
 	Run: func(cmd *cobra.Command, args []string) {

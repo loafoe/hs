@@ -22,8 +22,6 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -31,15 +29,15 @@ import (
 var workspaceCmd = &cobra.Command{
 	Use:   "workspace",
 	Aliases: []string{"ws"},
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Manage workspaces",
+	Long: `Manages workspaces
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Workspaces are a core concept of hs. You can setup multiple workspaces
+each having their own regional and environment based configuration. 
+This is very convenient if you have global deployments or are working with 
+mulitple customers and need to context switch frequently.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("workspace called")
+		_ = cmd.Help()
 	},
 }
 

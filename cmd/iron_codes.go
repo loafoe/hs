@@ -28,6 +28,7 @@ import (
 // codesCmd represents the codes command
 var codesCmd = &cobra.Command{
 	Use:   "codes",
+	Aliases: []string{"c", "co"},
 	Short: "Manage registration of codes with Iron",
 	Long: `Manage registration of codes with Iron`,
 	Run: func(cmd *cobra.Command, args []string) {

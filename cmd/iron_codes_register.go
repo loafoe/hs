@@ -31,6 +31,7 @@ import (
 // ironRegisterCmd represents the register command
 var ironRegisterCmd = &cobra.Command{
 	Use:   "register some/image[:tag]",
+	Aliases: []string{"r"},
 	Short: "Register a docker image as an Iron code",
 	Long: `Registers a docker image as an Iron code`,
 	Run: func(cmd *cobra.Command, args []string) {
