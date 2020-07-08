@@ -31,6 +31,7 @@ import (
 // scheduleCmd represents the schedule command
 var scheduleCmd = &cobra.Command{
 	Use:   "schedule <code>",
+	Aliases: []string{"s"},
 	Short: "Schedule a task on a cluster",
 	Long: `Schedule a task on a cluster`,
 	Run: func(cmd *cobra.Command, args []string) {

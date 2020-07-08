@@ -23,21 +23,19 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/cheynewallace/tabby"
 	"github.com/philips-software/go-hsdp-api/iron"
 
 	"github.com/spf13/cobra"
 )
 
-// queueCmd represents the queue command
-var queueCmd = &cobra.Command{
-	Use:   "queue <code>",
-	Aliases: []string{"q"},
-	Short: "Queues tasks on a cluster",
-	Long: `Queues tasks on a cluster`,
+// clustersCmd represents the clusters command
+var clustersCmd = &cobra.Command{
+	Use:   "clusters",
+	Aliases: []string{"cl"},
+	Short: "List available clusters",
+	Long: `Lists the available Iron clusters.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			_ = cmd.Help()
-		}
 		config, err := readIronConfig()
 		if err != nil {
 			fmt.Printf("error reading iron config: %v\n", err)
@@ -48,20 +46,38 @@ var queueCmd = &cobra.Command{
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
-		client.Close()
+		fmt.Printf("retrieving clusters...\n\n")
+		clusters, _, err := client.Clusters.GetClusters()
+		if err != nil {
+			fmt.Printf("error retrieving clusters: %v\n", err)
+			return
+		}
+		cl, _, _ := client.Clusters.GetCluster(config.ClusterInfo[0].ClusterID)
+		if cl != nil {
+			*clusters = append(*clusters, *cl)
+		}
+		t := tabby.New()
+		t.AddHeader("cluster id", "name", "available", "total", "cpu", "memory", "disk")
+		if clusters != nil {
+			for _, cl := range *clusters {
+				t.AddLine(cl.ID, cl.Name, cl.RunnersAvailable, cl.RunnersTotal, cl.CPUShare, cl.Memory, cl.DiskSpace)
+			}
+		}
+		t.Print()
+		fmt.Printf("\n")
 	},
 }
 
 func init() {
-	ironCmd.AddCommand(queueCmd)
+	ironCmd.AddCommand(clustersCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// queueCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// clustersCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// queueCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// clustersCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
