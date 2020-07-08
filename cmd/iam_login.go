@@ -40,21 +40,21 @@ var iamLoginCmd = &cobra.Command{
 	Short: "Log into HSDP IAM using browser authentication flow",
 	Long: `Log into HSDP IAM using browser authentication flow`,
 	Run: func(cmd *cobra.Command, args []string) {
+		region, _ := cmd.Flags().GetString("region")
+		environment, _ := cmd.Flags().GetString("environment")
+		debug, _ := cmd.Flags().GetBool("debug")
+
 		if clientID == "" || clientSecret == "" {
 			fmt.Printf("this feature only works with official binaries.\n")
 			return
 		}
-		region, _ := cmd.PersistentFlags().GetString("region")
-		environment, _ := cmd.PersistentFlags().GetString("environment")
-
 		// IAM
 		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
 			Region: region,
 			Environment: environment,
 			OAuth2ClientID: clientID,
 			OAuth2Secret: clientSecret,
-			Debug: true,
-			DebugLog: "/tmp/hs.log",
+			Debug: debug,
 		})
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)
