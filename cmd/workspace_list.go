@@ -23,31 +23,33 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
 
 // ironTasksListCmd represents the list command
 var workspaceListCmd = &cobra.Command{
-	Use:   "list",
+	Use:     "list",
 	Aliases: []string{"l", "li"},
-	Short: "List available workspaces",
-	Long: `Lists available workspaces.`,
+	Short:   "List available workspaces",
+	Long:    `Lists available workspaces.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
+		list, current, err := currentWorkspace.list()
+		if err != nil {
+			fmt.Printf("failed to list workspaces: %v\n", err)
+			os.Exit(1)
+		}
+		for _, l := range list {
+			if l == current {
+				fmt.Printf("* %s\n", l)
+			} else {
+				fmt.Printf("  %s\n", l)
+			}
+		}
 	},
 }
 
 func init() {
 	workspaceCmd.AddCommand(workspaceListCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// ironTasksListCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// ironTasksListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

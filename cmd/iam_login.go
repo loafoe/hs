@@ -24,13 +24,14 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/philips-software/go-hsdp-api/iam"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/pkg/browser"
+	"github.com/philips-software/go-hsdp-api/iam"
+
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +39,7 @@ import (
 var iamLoginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Log into HSDP IAM using browser authentication flow",
-	Long: `Log into HSDP IAM using browser authentication flow`,
+	Long:  `Log into HSDP IAM using browser authentication flow`,
 	Run: func(cmd *cobra.Command, args []string) {
 		region, _ := cmd.Flags().GetString("region")
 		environment, _ := cmd.Flags().GetString("environment")
@@ -50,11 +51,11 @@ var iamLoginCmd = &cobra.Command{
 		}
 		// IAM
 		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-			Region: region,
-			Environment: environment,
+			Region:         region,
+			Environment:    environment,
 			OAuth2ClientID: clientID,
-			OAuth2Secret: clientSecret,
-			Debug: debug,
+			OAuth2Secret:   clientSecret,
+			Debug:          debug,
 		})
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)
@@ -101,21 +102,12 @@ var iamLoginCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		fmt.Printf("logged in as: %s\n", introspect.Username)
-		fmt.Printf("access_token: %s\n", iamClient.Token())
-		fmt.Printf("refresh_token: %s\n", iamClient.RefreshToken())
-
+		currentWorkspace.IAMAccessToken = iamClient.Token()
+		currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
+		currentWorkspace.save()
 	},
 }
 
 func init() {
 	iamCmd.AddCommand(iamLoginCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	//iamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

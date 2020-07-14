@@ -23,17 +23,18 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/philips-software/go-hsdp-api/iron"
 
 	"github.com/spf13/cobra"
 )
 
-// queueCmd represents the queue command
-var queueCmd = &cobra.Command{
-	Use:   "queue <code>",
+// ironQueueCmd represents the queue command
+var ironQueueCmd = &cobra.Command{
+	Use:     "queue <code>",
 	Aliases: []string{"q"},
-	Short: "Queues tasks on a cluster",
-	Long: `Queues tasks on a cluster`,
+	Short:   "Queues tasks on a cluster",
+	Long:    `Queues tasks on a cluster`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
@@ -53,15 +54,7 @@ var queueCmd = &cobra.Command{
 }
 
 func init() {
-	ironCmd.AddCommand(queueCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// queueCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// queueCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	ironCmd.AddCommand(ironQueueCmd)
+	ironQueueCmd.Flags().StringP("payload", "p", "", "Payload to use")
+	ironQueueCmd.Flags().IntP("timeout", "t", 3600, "Timeout to use in seconds")
 }

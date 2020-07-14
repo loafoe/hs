@@ -23,17 +23,18 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/philips-software/go-hsdp-api/iron"
 
 	"github.com/spf13/cobra"
 )
 
-// scheduleCmd represents the schedule command
-var scheduleCmd = &cobra.Command{
-	Use:   "schedule <code>",
+// ironScheduleCmd represents the schedule command
+var ironScheduleCmd = &cobra.Command{
+	Use:     "schedule <code>",
 	Aliases: []string{"s"},
-	Short: "Schedule a task on a cluster",
-	Long: `Schedule a task on a cluster`,
+	Short:   "Schedule a task on a cluster",
+	Long:    `Schedule a task on a cluster`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
@@ -73,11 +74,11 @@ var scheduleCmd = &cobra.Command{
 		}
 		schedule, resp, err := client.Schedules.CreateSchedule(iron.Schedule{
 			CodeName: code,
-			Payload: encryptedPayload,
-			Timeout: timeout,
+			Payload:  encryptedPayload,
+			Timeout:  timeout,
 			RunEvery: runEvery,
 			RunTimes: runTimes,
-			Cluster: cluster,
+			Cluster:  cluster,
 		})
 		if err != nil {
 			fmt.Printf("error scheduling task: %v\n", err)
@@ -92,19 +93,9 @@ var scheduleCmd = &cobra.Command{
 }
 
 func init() {
-	ironCmd.AddCommand(scheduleCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// scheduleCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	scheduleCmd.Flags().StringP("cluster", "c", "", "Cluster to schedule task on")
-	scheduleCmd.Flags().StringP("payload", "p", "", "Payload to use")
-	scheduleCmd.Flags().IntP("timeout", "t", 3600, "Timeout to use in seconds")
-	scheduleCmd.Flags().IntP("every", "f", 0, "Time between runs in seconds")
-	scheduleCmd.Flags().IntP("times", "r", 0, "Number of times the task will run")
+	ironCmd.AddCommand(ironScheduleCmd)
+	ironScheduleCmd.Flags().StringP("payload", "p", "", "Payload to use")
+	ironScheduleCmd.Flags().IntP("timeout", "t", 3600, "Timeout to use in seconds")
+	ironScheduleCmd.Flags().IntP("every", "f", 0, "Time between runs in seconds")
+	ironScheduleCmd.Flags().IntP("times", "r", 0, "Number of times the task will run")
 }

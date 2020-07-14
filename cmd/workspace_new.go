@@ -29,25 +29,37 @@ import (
 
 // workspaceNewCmd represents the new command
 var workspaceNewCmd = &cobra.Command{
-	Use:   "new",
+	Use:     "new <workspace>",
 	Aliases: []string{"n"},
-	Short: "Create a new workspace",
-	Long: `Creates a new workspace.`,
+	Short:   "Create a new workspace",
+	Long:    `Creates a new workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("new called")
+		if len(args) == 0 {
+			cmd.Help()
+			return
+		}
+		region, _ := cmd.Flags().GetString("region")
+		environment, _ := cmd.Flags().GetString("environment")
+
+		workspace := args[0]
+
+		if currentWorkspace == nil {
+			fmt.Printf("WTF\n")
+			return
+		}
+		currentWorkspace.DefaultEnvironment = environment
+		currentWorkspace.DefaultRegion = region
+		currentWorkspace.Name = workspace
+		if err := currentWorkspace.save(); err != nil {
+			fmt.Printf("failed to create new workspace: %v\n", err)
+			return
+		}
+		fmt.Printf("workspace %s created\n", workspace)
 	},
 }
 
 func init() {
 	workspaceCmd.AddCommand(workspaceNewCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// workspaceNewCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// workspaceNewCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	workspaceNewCmd.Flags().StringP("region", "r", "us-east", "Default region to use")
+	workspaceNewCmd.Flags().StringP("environment", "e", "client-test", "Default environment to use")
 }

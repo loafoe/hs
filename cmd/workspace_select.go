@@ -29,11 +29,22 @@ import (
 
 // workspaceSelectCmd represents the set command
 var workspaceSelectCmd = &cobra.Command{
-	Use:   "select",
-	Short: "Select a different workspace",
-	Long: `Selects a different workspace.`,
+	Use:     "select <workspace>",
+	Aliases: []string{"s"},
+	Short:   "Select a different workspace",
+	Long:    `Selects a different workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("set called")
+		if len(args) == 0 {
+			cmd.Help()
+			return
+		}
+		workspace := args[0]
+		currentWorkspace.Name = workspace
+		if err := currentWorkspace.setDefault(); err != nil {
+			fmt.Printf("failed to select workspace %s: %v\n", workspace, err)
+			return
+		}
+		fmt.Printf("selected workspace %s\n", workspace)
 	},
 }
 

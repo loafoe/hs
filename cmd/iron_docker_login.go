@@ -62,6 +62,8 @@ var dockerLoginCmd = &cobra.Command{
 		})
 		if err != nil {
 			fmt.Printf("error registering credentials: %v\n", err)
+			fmt.Printf("\n")
+			_ = cmd.Help()
 			return
 		}
 		if !ok {

@@ -23,11 +23,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
-	"path/filepath"
 
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
+
 	"github.com/spf13/viper"
 )
 
@@ -37,9 +36,7 @@ var debugLog string
 var clientID string
 var clientSecret string
 var workspace = "default"
-var workspaceRoot string
-var workspaceRegion string = "us-east"
-var workspaceEnvironment string = ""
+var currentWorkspace *workspaceConfig
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -78,26 +75,19 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	currentWorkspace = new(workspaceConfig)
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		workspaceRoot = filepath.Join(home, ".hs", "workspaces", workspace)
-		err = os.MkdirAll(workspaceRoot, 0700)
-		if err != nil {
-			fmt.Printf("workspace directory error: %v\n", err)
-			os.Exit(1)
-		}
 		// Search config in home directory with name ".hs" (without extension).
-		viper.AddConfigPath(home)
 		viper.SetConfigName(".hs")
+
+	}
+	if err := currentWorkspace.init(); err != nil {
+		fmt.Printf("failed to initalize workspace: %v\n", err)
+		os.Exit(1)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

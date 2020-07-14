@@ -28,15 +28,15 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/spf13/cobra"
 	"github.com/philips-software/go-hsdp-api/iron"
+	"github.com/spf13/cobra"
 )
 
 // ironCmd represents the iron command
 var ironCmd = &cobra.Command{
 	Use:   "iron",
 	Short: "Interaction with HSPD IronIO",
-	Long: `This is a replacement of the iron CLI with a focus on dockerized tasks.`,
+	Long:  `This is a replacement of the iron CLI with a focus on dockerized tasks.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
@@ -44,16 +44,7 @@ var ironCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(ironCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// ironCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// ironCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	ironCmd.PersistentFlags().StringP("cluster", "c", "", "Cluster to use")
 }
 
 func readIronConfig(path ...string) (*iron.Config, error) {
