@@ -29,7 +29,7 @@ import (
 var iamCmd = &cobra.Command{
 	Use:   "iam",
 	Short: "Interact with HSDP IAM resources",
-	Long: `Interact with HSDP IAM resources`,
+	Long:  `Interact with HSDP IAM resources`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
@@ -43,8 +43,8 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// iamCmd.PersistentFlags().String("foo", "", "A help for foo")
-	iamCmd.PersistentFlags().StringP("region", "r", "us-east", "HSDP region to use (default: us-east)")
-	iamCmd.PersistentFlags().StringP("environment", "e", "client-test", "HSDP environment to use (default: client-test)")
+	iamCmd.PersistentFlags().StringP("region", "r", "", "HSDP region to use (default: us-east)")
+	iamCmd.PersistentFlags().StringP("environment", "e", "", "HSDP environment to use (default: client-test)")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

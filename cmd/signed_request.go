@@ -31,15 +31,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/spf13/cobra"
 	signer "github.com/philips-software/go-hsdp-signer"
+	"github.com/spf13/cobra"
 )
 
 // signedRequestCmd represents the signedRequest command
 var signedRequestCmd = &cobra.Command{
-	Use:   "signed-request -k key -s secret -X method url",
-	Short: "Perform a signed request",
-	Long: `Perform a request that is protected by the HSDP API signing algorithm`,
+	Use:     "signed-request -k key -s secret -X method url",
+	Short:   "Perform a signed request",
+	Long:    `Perform a request that is protected by the HSDP API signing algorithm`,
 	Aliases: []string{"sr"},
 	Run: func(cmd *cobra.Command, args []string) {
 		key, _ := cmd.Flags().GetString("key")
@@ -89,7 +89,7 @@ var signedRequestCmd = &cobra.Command{
 			fmt.Printf("error on request: %v\n", err)
 			return
 		}
-		if resp == nil {
+		if resp == nil || resp.Body == nil {
 			fmt.Printf("response error\n")
 		}
 		respData, err := ioutil.ReadAll(resp.Body)
@@ -100,7 +100,6 @@ var signedRequestCmd = &cobra.Command{
 		if !debug {
 			fmt.Printf("%v", string(respData))
 		}
-		return
 	},
 }
 

@@ -8,5 +8,5 @@ import (
 func pretty(data []byte) string {
 	var prettyJSON bytes.Buffer
 	_ = json.Indent(&prettyJSON, data, "", "    ")
-	return string(prettyJSON.Bytes())
+	return prettyJSON.String()
 }

@@ -23,17 +23,18 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/philips-software/go-hsdp-api/has"
 	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/spf13/cobra"
-	"net/http"
 )
 
 // ironTasksListCmd represents the list command
 var imageListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List available has images",
-	Long: `Lists the available list of HAS machine images`,
+	Long:  `Lists the available list of HAS machine images`,
 	Run: func(cmd *cobra.Command, args []string) {
 		url, _ := cmd.PersistentFlags().GetString("url")
 		orgID, _ := cmd.PersistentFlags().GetString("orgid")
@@ -41,18 +42,26 @@ var imageListCmd = &cobra.Command{
 			fmt.Printf("need a HAS backend URL\n")
 			return
 		}
-		if orgID == "" {
-			fmt.Printf("need an organization ID\n")
-			return
-		}
 		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
+			Region:      currentWorkspace.IAMRegion,
+			Environment: currentWorkspace.IAMEnvironment,
 		})
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)
 		}
+		if orgID == "" {
+			introspect, _, err := iamClient.Introspect()
+			if err != nil {
+				fmt.Printf("failed to fetch organization: %v\n", err)
+				return
+			}
+			orgID = introspect.Organizations.ManagingOrganization
+			return
+		}
+		iamClient.SetToken(currentWorkspace.IAMAccessToken)
 		client, err := has.NewClient(iamClient, &has.Config{
 			HASURL: url,
-			OrgID: orgID,
+			OrgID:  orgID,
 		})
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)

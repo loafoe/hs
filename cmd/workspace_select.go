@@ -35,12 +35,11 @@ var workspaceSelectCmd = &cobra.Command{
 	Long:    `Selects a different workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			cmd.Help()
+			_ = cmd.Help()
 			return
 		}
 		workspace := args[0]
-		currentWorkspace.Name = workspace
-		if err := currentWorkspace.setDefault(); err != nil {
+		if err := currentWorkspace.setDefault(workspace); err != nil {
 			fmt.Printf("failed to select workspace %s: %v\n", workspace, err)
 			return
 		}

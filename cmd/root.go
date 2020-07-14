@@ -32,10 +32,8 @@ import (
 
 var cfgFile string
 var debug bool
-var debugLog string
 var clientID string
 var clientSecret string
-var workspace = "default"
 var currentWorkspace *workspaceConfig
 
 // rootCmd represents the base command when called without any subcommands
@@ -86,7 +84,7 @@ func initConfig() {
 
 	}
 	if err := currentWorkspace.init(); err != nil {
-		fmt.Printf("failed to initalize workspace: %v\n", err)
+		fmt.Printf("failed to initialize workspace: %v\n", err)
 		os.Exit(1)
 	}
 

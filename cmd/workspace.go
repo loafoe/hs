@@ -54,16 +54,16 @@ mulitple customers and need to context switch frequently.`,
 
 type workspaceConfig struct {
 	sync.Mutex
-	Name               string `json:"-"`
-	Version            int
-	DefaultRegion      string
-	DefaultEnvironment string
-	IAMAccessToken     string
-	IAMRefreshToken    string
-	IAMRegion          string
-	IAMEnvironment     string
-	HASConfig          has.Config
-	IronConfig         iron.Config
+	Name               string      `json:"-"`
+	Version            int         `json:"Version"`
+	DefaultRegion      string      `json:"DefaultRegion"`
+	DefaultEnvironment string      `json:"DefaultEnvironemnt"`
+	IAMAccessToken     string      `json:"IAMAccessToken"`
+	IAMRefreshToken    string      `json:"IAMRefreshToken"`
+	IAMRegion          string      `json:"IAMRegion"`
+	IAMEnvironment     string      `json:"IAMEnvironment"`
+	HASConfig          has.Config  `json:"HASConfig"`
+	IronConfig         iron.Config `json:"IronConfig"`
 }
 
 func (w *workspaceConfig) root() string {
@@ -88,12 +88,11 @@ func (w *workspaceConfig) configFile() string {
 }
 
 func (w *workspaceConfig) list() ([]string, string, error) {
-	current := ""
 	workspaceList := make([]string, 0)
 	glob := filepath.Join(w.root(), "*.config.json")
 	list, err := filepath.Glob(glob)
 	if err != nil {
-		return list, current, err
+		return list, "", err
 	}
 	for _, l := range list {
 		workspaceList = append(workspaceList, workspaceName(l))
@@ -103,7 +102,7 @@ func (w *workspaceConfig) list() ([]string, string, error) {
 
 func workspaceName(file string) string {
 	baseName := filepath.Base(file)
-	return strings.TrimRight(baseName, ".config.json")
+	return strings.TrimSuffix(baseName, ".config.json")
 }
 
 func (w *workspaceConfig) current() string {
@@ -145,10 +144,11 @@ func (w *workspaceConfig) load(workspace string) error {
 	if err != nil {
 		return err
 	}
+	w.Name = workspace
 	return nil
 }
 
-func (w *workspaceConfig) setDefault() error {
+func (w *workspaceConfig) setDefault(workspace string) error {
 	w.Lock()
 	defer w.Unlock()
 	current := filepath.Join(w.root(), "current")
@@ -157,6 +157,7 @@ func (w *workspaceConfig) setDefault() error {
 			return err
 		}
 	}
+	w.Name = workspace
 	if err := os.Symlink(w.configFile(), current); err != nil {
 		return err
 	}
@@ -205,30 +206,9 @@ func (w *workspaceConfig) ensureDefault() {
 func (w *workspaceConfig) init() error {
 	w.ensureRoot()
 	w.ensureDefault()
-	currentWorkspaceFile := filepath.Join(w.root(), "current")
-
-	// Finally we can read the current config
-	data, err := ioutil.ReadFile(currentWorkspaceFile)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(data, w)
-	if err != nil {
-		return err
-	}
-	return nil
+	return w.load(w.current())
 }
 
 func init() {
 	rootCmd.AddCommand(workspaceCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// workspaceCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// workspaceCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

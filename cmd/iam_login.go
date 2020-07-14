@@ -44,6 +44,12 @@ var iamLoginCmd = &cobra.Command{
 		region, _ := cmd.Flags().GetString("region")
 		environment, _ := cmd.Flags().GetString("environment")
 		debug, _ := cmd.Flags().GetBool("debug")
+		if region == "" {
+			region = currentWorkspace.DefaultRegion
+		}
+		if environment == "" {
+			environment = currentWorkspace.DefaultEnvironment
+		}
 
 		if clientID == "" || clientSecret == "" {
 			fmt.Printf("this feature only works with official binaries.\n")
@@ -69,14 +75,14 @@ var iamLoginCmd = &cobra.Command{
 			code := c.QueryParam("code")
 			err := iamClient.CodeLogin(code, redirectURI)
 			if err != nil {
-				c.HTML(http.StatusForbidden, "<html><body>Login failed</body></html>")
+				_ = c.HTML(http.StatusForbidden, "<html><body>Login failed</body></html>")
 				go func() {
 					time.Sleep(1 * time.Second)
 					_ = e.Shutdown(context.Background())
 				}()
 				return err
 			}
-			c.HTML(http.StatusOK, "<html><body>You are now logged in! Feel free to close this window...</body></html>")
+			_ = c.HTML(http.StatusOK, "<html><body>You are now logged in! Feel free to close this window...</body></html>")
 			loginSuccess = true
 			go func() {
 				time.Sleep(2 * time.Second)
@@ -84,8 +90,9 @@ var iamLoginCmd = &cobra.Command{
 			}()
 			return nil
 		})
-		fmt.Printf("login using your browser ...\n")
-		err = browser.OpenURL("https://iam-client-test.us-east.philips-healthsuite.com/authorize/oauth2/authorize?response_type=code&client_id=hsappclient&redirect_uri=http://localhost:35444/callback")
+		baseIAMURL := iamClient.BaseIAMURL().String()
+		fmt.Printf("login using your browser to login...\n")
+		err = browser.OpenURL(baseIAMURL + "/authorize/oauth2/authorize?response_type=code&client_id=hsappclient&redirect_uri=http://localhost:35444/callback")
 		if err != nil {
 			fmt.Printf("failed to open browser login: %v\n", err)
 			os.Exit(1)
@@ -104,7 +111,11 @@ var iamLoginCmd = &cobra.Command{
 		fmt.Printf("logged in as: %s\n", introspect.Username)
 		currentWorkspace.IAMAccessToken = iamClient.Token()
 		currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
-		currentWorkspace.save()
+		currentWorkspace.IAMRegion = region
+		currentWorkspace.IAMEnvironment = environment
+		if err := currentWorkspace.save(); err != nil {
+			fmt.Printf("failed to save workspace: %v\n", err)
+		}
 	},
 }
 

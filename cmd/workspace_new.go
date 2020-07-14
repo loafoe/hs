@@ -35,7 +35,7 @@ var workspaceNewCmd = &cobra.Command{
 	Long:    `Creates a new workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			cmd.Help()
+			_ = cmd.Help()
 			return
 		}
 		region, _ := cmd.Flags().GetString("region")
@@ -43,18 +43,20 @@ var workspaceNewCmd = &cobra.Command{
 
 		workspace := args[0]
 
-		if currentWorkspace == nil {
-			fmt.Printf("WTF\n")
-			return
-		}
-		currentWorkspace.DefaultEnvironment = environment
-		currentWorkspace.DefaultRegion = region
-		currentWorkspace.Name = workspace
-		if err := currentWorkspace.save(); err != nil {
+		newWorkspace := &workspaceConfig{}
+		newWorkspace.DefaultEnvironment = environment
+		newWorkspace.DefaultRegion = region
+		newWorkspace.Name = workspace
+		if err := newWorkspace.save(); err != nil {
 			fmt.Printf("failed to create new workspace: %v\n", err)
 			return
 		}
 		fmt.Printf("workspace %s created\n", workspace)
+		if err := newWorkspace.setDefault(workspace); err != nil {
+			fmt.Printf("failed to select worksace %s: %v\n", workspace, err)
+			return
+		}
+		fmt.Printf("selected workspace %s\n", workspace)
 	},
 }
 
