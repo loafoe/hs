@@ -25,30 +25,47 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/philips-software/go-hsdp-api/config"
 	"github.com/philips-software/go-hsdp-api/has"
 	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/spf13/cobra"
 )
 
 // ironTasksListCmd represents the list command
-var imageListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List available has images",
-	Long:  `Lists the available list of HAS machine images`,
+var hasImageListCmd = &cobra.Command{
+	Use:     "list",
+	Aliases: []string{"l", "li"},
+	Short:   "List available has images",
+	Long:    `Lists the available list of HAS machine images`,
 	Run: func(cmd *cobra.Command, args []string) {
-		url, _ := cmd.PersistentFlags().GetString("url")
-		orgID, _ := cmd.PersistentFlags().GetString("orgid")
+		url, _ := cmd.Flags().GetString("url")
+		orgID, _ := cmd.Flags().GetString("orgid")
 		if url == "" {
-			fmt.Printf("need a HAS backend URL\n")
-			return
+			c, err := config.New(config.WithRegion(currentWorkspace.IAMRegion),
+				config.WithEnv(currentWorkspace.IAMEnvironment))
+			if err != nil {
+				fmt.Printf("failed to autoconfig HAS backend URL: %v\n", err)
+				return
+			}
+			url, err = c.Service("has").GetString("url")
+			if err != nil {
+				fmt.Printf("need a HAS backend URL: %v\n", err)
+				return
+			}
 		}
+		currentWorkspace.HASConfig.HASURL = url
 		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-			Region:      currentWorkspace.IAMRegion,
-			Environment: currentWorkspace.IAMEnvironment,
+			Region:         currentWorkspace.IAMRegion,
+			Environment:    currentWorkspace.IAMEnvironment,
+			OAuth2ClientID: clientID,
+			OAuth2Secret:   clientSecret,
+			Debug:          true,
+			DebugLog:       "/tmp/hs_has_iam.log",
 		})
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)
 		}
+		iamClient.SetToken(currentWorkspace.IAMAccessToken)
 		if orgID == "" {
 			introspect, _, err := iamClient.Introspect()
 			if err != nil {
@@ -56,12 +73,13 @@ var imageListCmd = &cobra.Command{
 				return
 			}
 			orgID = introspect.Organizations.ManagingOrganization
-			return
+			currentWorkspace.HASConfig.OrgID = orgID
 		}
-		iamClient.SetToken(currentWorkspace.IAMAccessToken)
 		client, err := has.NewClient(iamClient, &has.Config{
-			HASURL: url,
-			OrgID:  orgID,
+			HASURL:   url,
+			OrgID:    orgID,
+			Debug:    true,
+			DebugLog: "/tmp/hs_has.log",
 		})
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
@@ -79,15 +97,5 @@ var imageListCmd = &cobra.Command{
 }
 
 func init() {
-	imagesCmd.AddCommand(imageListCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// ironTasksListCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// ironTasksListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	hasImagesCmd.AddCommand(hasImageListCmd)
 }
