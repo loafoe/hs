@@ -113,6 +113,7 @@ var iamLoginCmd = &cobra.Command{
 		currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
 		currentWorkspace.IAMRegion = region
 		currentWorkspace.IAMEnvironment = environment
+		currentWorkspace.IAMAccessTokenExpires = introspect.Expires
 		if err := currentWorkspace.save(); err != nil {
 			fmt.Printf("failed to save workspace: %v\n", err)
 		}

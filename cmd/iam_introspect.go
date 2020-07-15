@@ -22,45 +22,29 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/philips-software/go-hsdp-api/config"
-	"github.com/philips-software/go-hsdp-api/has"
 	"github.com/philips-software/go-hsdp-api/iam"
+
 	"github.com/spf13/cobra"
 )
 
-// ironTasksListCmd represents the list command
-var hasImageListCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l", "li"},
-	Short:   "List available has images",
-	Long:    `Lists the available list of HAS machine images`,
+// introspectCmd represents the introspect command
+var introspectCmd = &cobra.Command{
+	Use:     "introspect",
+	Aliases: []string{"in", "intro"},
+	Short:   "Introspect using current token",
+	Long:    `Does an introspect call with the current active token`,
 	Run: func(cmd *cobra.Command, args []string) {
-		url, _ := cmd.Flags().GetString("url")
-		orgID, _ := cmd.Flags().GetString("orgid")
-		if url == "" {
-			c, err := config.New(config.WithRegion(currentWorkspace.IAMRegion),
-				config.WithEnv(currentWorkspace.IAMEnvironment))
-			if err != nil {
-				fmt.Printf("failed to autoconfig HAS backend URL: %v\n", err)
-				return
-			}
-			url, err = c.Service("has").GetString("url")
-			if err != nil {
-				fmt.Printf("need a HAS backend URL: %v\n", err)
-				return
-			}
-		}
-		currentWorkspace.HASConfig.HASURL = url
 		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
 			Region:         currentWorkspace.IAMRegion,
 			Environment:    currentWorkspace.IAMEnvironment,
 			OAuth2ClientID: clientID,
 			OAuth2Secret:   clientSecret,
 			Debug:          true,
-			DebugLog:       "/tmp/hs_has_iam.log",
+			DebugLog:       "/tmp/hs_iam_introspect.log",
 		})
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)
@@ -69,36 +53,27 @@ var hasImageListCmd = &cobra.Command{
 		iamClient.SetTokens(currentWorkspace.IAMAccessToken,
 			currentWorkspace.IAMRefreshToken,
 			currentWorkspace.IAMAccessTokenExpires)
-		if orgID == "" {
-			introspect, _, err := iamClient.Introspect()
-			if err != nil {
-				fmt.Printf("failed to fetch organization: %v\n", err)
-				return
-			}
-			orgID = introspect.Organizations.ManagingOrganization
-			currentWorkspace.HASConfig.OrgID = orgID
-		}
-		client, err := has.NewClient(iamClient, &has.Config{
-			HASURL:   url,
-			OrgID:    orgID,
-			Debug:    true,
-			DebugLog: "/tmp/hs_has.log",
-		})
+		introspect, _, err := iamClient.Introspect()
 		if err != nil {
-			fmt.Printf("error initializing HAS client: %v\n", err)
+			fmt.Printf("error performing introspect: %v\n", err)
 			return
 		}
-		images, _, err := client.Images.GetImages()
+		data, err := json.Marshal(introspect)
 		if err != nil {
-			fmt.Printf("error retrieving image list: %v\n", err)
+			fmt.Printf("error marshalling introspect result: %v\n", err)
 			return
 		}
-		for _, image := range *images {
-			fmt.Printf("%s -- %s\n", image.ID, image.Name)
+		if introspect.Expires > currentWorkspace.IAMAccessTokenExpires {
+			currentWorkspace.IAMAccessToken = iamClient.Token()
+			currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
+			currentWorkspace.IAMAccessTokenExpires = iamClient.Expires()
+			_ = currentWorkspace.save()
 		}
+		fmt.Println(pretty(data))
 	},
 }
 
 func init() {
-	hasImagesCmd.AddCommand(hasImageListCmd)
+	iamCmd.AddCommand(introspectCmd)
+
 }

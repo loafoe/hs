@@ -54,16 +54,17 @@ mulitple customers and need to context switch frequently.`,
 
 type workspaceConfig struct {
 	sync.Mutex
-	Name               string      `json:"-"`
-	Version            int         `json:"Version"`
-	DefaultRegion      string      `json:"DefaultRegion"`
-	DefaultEnvironment string      `json:"DefaultEnvironemnt"`
-	IAMAccessToken     string      `json:"IAMAccessToken"`
-	IAMRefreshToken    string      `json:"IAMRefreshToken"`
-	IAMRegion          string      `json:"IAMRegion"`
-	IAMEnvironment     string      `json:"IAMEnvironment"`
-	HASConfig          has.Config  `json:"HASConfig"`
-	IronConfig         iron.Config `json:"IronConfig"`
+	Name                  string      `json:"-"`
+	Version               int         `json:"Version"`
+	DefaultRegion         string      `json:"DefaultRegion"`
+	DefaultEnvironment    string      `json:"DefaultEnvironemnt"`
+	IAMAccessToken        string      `json:"IAMAccessToken"`
+	IAMAccessTokenExpires int64       `json:"IAMAccessTokenExpires"`
+	IAMRefreshToken       string      `json:"IAMRefreshToken"`
+	IAMRegion             string      `json:"IAMRegion"`
+	IAMEnvironment        string      `json:"IAMEnvironment"`
+	HASConfig             has.Config  `json:"HASConfig"`
+	IronConfig            iron.Config `json:"IronConfig"`
 }
 
 func (w *workspaceConfig) root() string {
