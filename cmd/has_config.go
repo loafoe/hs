@@ -27,40 +27,32 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// workspaceNewCmd represents the new command
-var workspaceNewCmd = &cobra.Command{
-	Use:     "new <workspace>",
-	Aliases: []string{"n"},
-	Short:   "Create a new workspace",
-	Long:    `Creates a new workspace.`,
+// hasConfigCmd represents the config command
+var hasConfigCmd = &cobra.Command{
+	Use:   "config",
+	Short: "Configure HAS",
+	Long:  `Configure HAS settings.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
+		url, _ := cmd.Flags().GetString("url")
+		orgID, _ := cmd.Flags().GetString("orgid")
+		if url == "" && orgID == "" {
 			_ = cmd.Help()
 			return
 		}
-		region, _ := cmd.Flags().GetString("region")
-		environment, _ := cmd.Flags().GetString("environment")
-
-		workspace := args[0]
-
-		newWorkspace := &workspaceConfig{}
-		newWorkspace.DefaultEnvironment = environment
-		newWorkspace.DefaultRegion = region
-		newWorkspace.Name = workspace
-		if err := newWorkspace.save(); err != nil {
-			fmt.Printf("failed to create new workspace: %v\n", err)
-			return
+		if url != "" {
+			currentWorkspace.HASConfig.HASURL = url
 		}
-		if err := newWorkspace.setDefault(workspace); err != nil {
-			fmt.Printf("failed to select workspace %s: %v\n", workspace, err)
-			return
+		if orgID != "" {
+			currentWorkspace.HASConfig.OrgID = orgID
 		}
-		fmt.Printf("selected new workspace %s\n", workspace)
+		if err := currentWorkspace.save(); err == nil {
+			fmt.Printf("OK\n")
+		} else {
+			fmt.Printf("failed to store config: %v\n", err)
+		}
 	},
 }
 
 func init() {
-	workspaceCmd.AddCommand(workspaceNewCmd)
-	workspaceNewCmd.Flags().StringP("region", "r", "us-east", "Default region to use")
-	workspaceNewCmd.Flags().StringP("environment", "e", "client-test", "Default environment to use")
+	hasCmd.AddCommand(hasConfigCmd)
 }

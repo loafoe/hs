@@ -29,25 +29,24 @@ import (
 
 // workspaceDeleteCmd represents the delete command
 var workspaceDeleteCmd = &cobra.Command{
-	Use:   "delete",
+	Use:     "delete <workspace>",
 	Aliases: []string{"d", "del"},
-	Short: "Delete a workspace",
-	Long: `Deletes a workspace.`,
+	Short:   "Delete a workspace",
+	Long:    `Deletes a workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
+		if len(args) != 1 {
+			_ = cmd.Help()
+			return
+		}
+		workspace := args[0]
+		if err := currentWorkspace.delete(workspace); err != nil {
+			fmt.Printf("cannot delete workspace %s: %v\n", workspace, err)
+			return
+		}
+		fmt.Printf("workspace %s deleted\n", workspace)
 	},
 }
 
 func init() {
 	workspaceCmd.AddCommand(workspaceDeleteCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// workspaceDeleteCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// workspaceDeleteCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -23,45 +23,65 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/cheynewallace/tabby"
+	"github.com/philips-software/go-hsdp-api/has"
 
 	"github.com/spf13/cobra"
 )
 
-// ironTasksListCmd represents the list command
-var hasImageListCmd = &cobra.Command{
+// hasResourcesListCmd represents the list command
+var hasResourcesListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l", "li"},
-	Short:   "List available has images",
-	Long:    `Lists the available list of HAS machine images`,
+	Short:   "List HAS resources",
+	Long:    `Lists HAS resources`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := getHASClient(cmd, args)
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
-		images, _, err := client.Images.GetImages()
 		if err != nil {
-			fmt.Printf("error retrieving image list: %v\n", err)
+			fmt.Printf("error initializing HAS client: %v\n", err)
+			return
+		}
+		resources, _, err := client.Resources.GetResources(&has.ResourceOptions{
+			Region: &currentWorkspace.DefaultRegion,
+		})
+		if err != nil {
+			fmt.Printf("error retrieving resources list: %v\n", err)
 			return
 		}
 		t := tabby.New()
-		t.AddHeader("image id", "name", "regions")
-		for _, i := range *images {
-			t.AddLine(i.ID,
-				i.Name,
-				strings.Join(i.Regions, ","))
+		t.AddHeader("resource id", "region", "state", "image", "dns")
+		for _, r := range *resources {
+			t.AddLine(r.ID,
+				r.Region,
+				r.State,
+				r.ImageID,
+				r.DNS)
 		}
 		t.Print()
-		if len(*images) == 0 {
-			fmt.Printf("no images found\n")
+		if len(*resources) == 0 {
+			fmt.Printf("no resources found\n")
 		}
-		fmt.Printf("\n")
+		for _, resource := range *resources {
+			fmt.Printf("%s -- %s\n", resource.ID, resource.State)
+		}
 	},
 }
 
 func init() {
-	hasImagesCmd.AddCommand(hasImageListCmd)
+	hasResourcesCmd.AddCommand(hasResourcesListCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// hasResourcesListCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	hasResourcesListCmd.Flags().StringP("region", "r", "", "List images in this region")
 }

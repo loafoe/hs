@@ -22,6 +22,12 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
+	"net/http"
+
+	"github.com/philips-software/go-hsdp-api/config"
+	"github.com/philips-software/go-hsdp-api/has"
+	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +35,7 @@ import (
 var hasCmd = &cobra.Command{
 	Use:   "has",
 	Short: "Manage Hosted Appstream resources",
-	Long: `Manage Hosted Appstream resources`,
+	Long:  `Manage Hosted Appstream resources`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
@@ -38,14 +44,65 @@ var hasCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(hasCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
 	hasCmd.PersistentFlags().StringP("url", "u", "", "The HAS backend server to use")
 	hasCmd.PersistentFlags().StringP("orgid", "o", "", "The organization ID (tenant) to use")
+	hasCmd.Flags().StringP("region", "r", "", "Use the specified region for operations")
+}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// hasCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
+	url, _ := cmd.Flags().GetString("url")
+	orgID, _ := cmd.Flags().GetString("orgid")
+	region, _ := cmd.Flags().GetString("region")
+	if url == "" {
+		if currentWorkspace.HASConfig.HASURL == "" {
+			c, err := config.New(config.WithRegion(currentWorkspace.IAMRegion),
+				config.WithEnv(currentWorkspace.IAMEnvironment))
+			if err != nil {
+				return nil, fmt.Errorf("autoconfig: %w", err)
+			}
+			if region != "" {
+				c = c.Region(region)
+			}
+			url, err = c.Service("has").GetString("url")
+			if err != nil {
+				return nil, fmt.Errorf("service: %w", err)
+			}
+			currentWorkspace.HASConfig.HASURL = url
+		}
+	} else {
+		currentWorkspace.HASConfig.HASURL = url
+	}
+	iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
+		Region:         currentWorkspace.IAMRegion,
+		Environment:    currentWorkspace.IAMEnvironment,
+		OAuth2ClientID: clientID,
+		OAuth2Secret:   clientSecret,
+		Debug:          true,
+		DebugLog:       "/tmp/hs_has_iam.log",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("iam client: %w", err)
+	}
+	iamClient.SetTokens(currentWorkspace.IAMAccessToken,
+		currentWorkspace.IAMRefreshToken,
+		currentWorkspace.IAMAccessTokenExpires)
+	if orgID == "" {
+		if currentWorkspace.HASConfig.OrgID == "" {
+			introspect, _, err := iamClient.Introspect()
+			if err != nil {
+				return nil, fmt.Errorf("organization: %w", err)
+			}
+			orgID = introspect.Organizations.ManagingOrganization
+			currentWorkspace.HASConfig.OrgID = orgID
+		}
+	} else {
+		currentWorkspace.HASConfig.OrgID = orgID
+	}
+	return has.NewClient(iamClient, &has.Config{
+		HASURL:   currentWorkspace.HASConfig.HASURL,
+		OrgID:    currentWorkspace.HASConfig.OrgID,
+		Debug:    true,
+		DebugLog: "/tmp/hs_has.log",
+	})
+
 }

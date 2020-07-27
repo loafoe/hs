@@ -84,8 +84,12 @@ func (w *workspaceConfig) root() string {
 
 }
 
-func (w *workspaceConfig) configFile() string {
-	return filepath.Join(w.root(), w.Name+".config.json")
+func (w *workspaceConfig) configFile(name ...string) string {
+	useName := w.Name
+	if len(name) > 0 {
+		useName = name[0]
+	}
+	return filepath.Join(w.root(), useName+".config.json")
 }
 
 func (w *workspaceConfig) list() ([]string, string, error) {
@@ -117,6 +121,16 @@ func (w *workspaceConfig) current() string {
 		return ""
 	}
 	return workspaceName(currentConfig)
+}
+
+func (w *workspaceConfig) delete(workspace string) error {
+	if workspace == "default" {
+		return fmt.Errorf("cannot remove default")
+	}
+	if workspace == w.current() {
+		_ = w.setDefault("default")
+	}
+	return os.Remove(w.configFile(workspace))
 }
 
 func (w *workspaceConfig) save() error {

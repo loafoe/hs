@@ -22,45 +22,20 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
-// workspaceNewCmd represents the new command
-var workspaceNewCmd = &cobra.Command{
-	Use:     "new <workspace>",
-	Aliases: []string{"n"},
-	Short:   "Create a new workspace",
-	Long:    `Creates a new workspace.`,
+// hasResourcesCmd represents the resource command
+var hasResourcesCmd = &cobra.Command{
+	Use:     "resources",
+	Aliases: []string{"r"},
+	Short:   "Manage HAS resources",
+	Long:    `Manage HAS resources.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			_ = cmd.Help()
-			return
-		}
-		region, _ := cmd.Flags().GetString("region")
-		environment, _ := cmd.Flags().GetString("environment")
-
-		workspace := args[0]
-
-		newWorkspace := &workspaceConfig{}
-		newWorkspace.DefaultEnvironment = environment
-		newWorkspace.DefaultRegion = region
-		newWorkspace.Name = workspace
-		if err := newWorkspace.save(); err != nil {
-			fmt.Printf("failed to create new workspace: %v\n", err)
-			return
-		}
-		if err := newWorkspace.setDefault(workspace); err != nil {
-			fmt.Printf("failed to select workspace %s: %v\n", workspace, err)
-			return
-		}
-		fmt.Printf("selected new workspace %s\n", workspace)
+		_ = cmd.Help()
 	},
 }
 
 func init() {
-	workspaceCmd.AddCommand(workspaceNewCmd)
-	workspaceNewCmd.Flags().StringP("region", "r", "us-east", "Default region to use")
-	workspaceNewCmd.Flags().StringP("environment", "e", "client-test", "Default environment to use")
+	hasCmd.AddCommand(hasResourcesCmd)
 }

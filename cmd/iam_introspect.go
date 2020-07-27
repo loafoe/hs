@@ -31,8 +31,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// introspectCmd represents the introspect command
-var introspectCmd = &cobra.Command{
+// iamIntrospectCmd represents the introspect command
+var iamIntrospectCmd = &cobra.Command{
 	Use:     "introspect",
 	Aliases: []string{"in", "intro"},
 	Short:   "Introspect using current token",
@@ -74,6 +74,6 @@ var introspectCmd = &cobra.Command{
 }
 
 func init() {
-	iamCmd.AddCommand(introspectCmd)
+	iamCmd.AddCommand(iamIntrospectCmd)
 
 }
