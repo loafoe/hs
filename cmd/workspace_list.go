@@ -31,7 +31,7 @@ import (
 // ironTasksListCmd represents the list command
 var workspaceListCmd = &cobra.Command{
 	Use:     "list",
-	Aliases: []string{"l", "li"},
+	Aliases: []string{"l", "ls"},
 	Short:   "List available workspaces",
 	Long:    `Lists available workspaces.`,
 	Run: func(cmd *cobra.Command, args []string) {

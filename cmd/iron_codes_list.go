@@ -23,18 +23,19 @@ package cmd
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/cheynewallace/tabby"
 	"github.com/philips-software/go-hsdp-api/iron"
-	"time"
 
 	"github.com/spf13/cobra"
 )
 
 // ironTasksListCmd represents the list command
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Aliases: []string{"l", "li"},
-	Short: "A brief description of your command",
+	Use:     "list",
+	Aliases: []string{"l", "ls"},
+	Short:   "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 

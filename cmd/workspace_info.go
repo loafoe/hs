@@ -27,39 +27,36 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// workspaceSelectCmd represents the set command
-var workspaceSelectCmd = &cobra.Command{
-	Use:     "select <workspace>",
-	Aliases: []string{"s"},
-	Short:   "Select a different workspace",
-	Long:    `Selects a different workspace.`,
+// workspaceInfoCmd represents the info command
+var workspaceInfoCmd = &cobra.Command{
+	Use:   "info",
+	Short: "Information on current workspace",
+	Long:  `Shows detailed information on current workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			_ = cmd.Help()
-			return
+		fmt.Printf("Workspace name:       %s\n", currentWorkspace.Name)
+		fmt.Printf("Default region:       %s\n", currentWorkspace.DefaultRegion)
+		fmt.Printf("Default environment:  %s\n", currentWorkspace.DefaultEnvironment)
+		loginStatus := "never logged in"
+		if expired := currentWorkspace.iamExpireTime(); expired != nil {
+			if currentWorkspace.iamLoginExpired() {
+				loginStatus = fmt.Sprintf("refresh required (expired at %v)", expired)
+				if currentWorkspace.IAMRefreshToken == "" {
+					loginStatus = "login required"
+				}
+			} else {
+				loginStatus = fmt.Sprintf("active (expires at %v)", expired)
+			}
 		}
-		workspace := args[0]
-		if err := currentWorkspace.setDefault(workspace); err != nil {
-			fmt.Printf("failed to select workspace %s: %v\n", workspace, err)
-			return
+		fmt.Printf("IAM Login status:     %s\n", loginStatus)
+		fmt.Printf("IAM Region:           %s\n", currentWorkspace.IAMRegion)
+		fmt.Printf("IAM Environment:      %s\n", currentWorkspace.IAMEnvironment)
+		if currentWorkspace.HASConfig.HASURL != "" {
+			fmt.Printf("HAS URL:              %s\n", currentWorkspace.HASConfig.HASURL)
 		}
-		fmt.Printf("switched to workspace %s\n", workspace)
 		fmt.Printf("\n")
-		_ = currentWorkspace.load(workspace)
-		workspaceInfoCmd.Run(cmd, args)
 	},
 }
 
 func init() {
-	workspaceCmd.AddCommand(workspaceSelectCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// workspaceSelectCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// workspaceSelectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	workspaceCmd.AddCommand(workspaceInfoCmd)
 }

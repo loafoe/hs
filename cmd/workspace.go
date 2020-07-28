@@ -29,6 +29,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/philips-software/go-hsdp-api/has"
@@ -58,13 +59,31 @@ type workspaceConfig struct {
 	Version               int         `json:"Version"`
 	DefaultRegion         string      `json:"DefaultRegion"`
 	DefaultEnvironment    string      `json:"DefaultEnvironemnt"`
+	IAMUserUUID           string      `json:"IAMUserUUID"`
 	IAMAccessToken        string      `json:"IAMAccessToken"`
 	IAMAccessTokenExpires int64       `json:"IAMAccessTokenExpires"`
 	IAMRefreshToken       string      `json:"IAMRefreshToken"`
+	IAMIDToken            string      `json:"IAMIDToken"`
 	IAMRegion             string      `json:"IAMRegion"`
 	IAMEnvironment        string      `json:"IAMEnvironment"`
 	HASConfig             has.Config  `json:"HASConfig"`
 	IronConfig            iron.Config `json:"IronConfig"`
+}
+
+func (w *workspaceConfig) iamExpireTime() *time.Time {
+	if w.IAMAccessTokenExpires == 0 {
+		return nil
+	}
+	tm := time.Unix(w.IAMAccessTokenExpires, 0)
+	return &tm
+}
+
+func (w *workspaceConfig) iamLoginExpired() bool {
+	expired := w.iamExpireTime()
+	if expired == nil {
+		return true
+	}
+	return expired.Before(time.Now())
 }
 
 func (w *workspaceConfig) root() string {
@@ -136,6 +155,7 @@ func (w *workspaceConfig) delete(workspace string) error {
 func (w *workspaceConfig) save() error {
 	w.Lock()
 	defer w.Unlock()
+	w.Version = 1
 	data, err := json.Marshal(w)
 	if err != nil {
 		return err

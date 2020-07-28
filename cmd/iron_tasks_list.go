@@ -23,18 +23,19 @@ package cmd
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/cheynewallace/tabby"
 	"github.com/philips-software/go-hsdp-api/iron"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 // ironTasksListCmd represents the list command
 var ironTasksListCmd = &cobra.Command{
-	Use:   "list",
-	Aliases: []string{"l"},
-	Short: "List tasks on Iron",
-	Long: `Lists task on Iron`,
+	Use:     "list",
+	Aliases: []string{"l", "ls"},
+	Short:   "List tasks on Iron",
+	Long:    `Lists task on Iron`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config, err := readIronConfig()
 		if err != nil {
@@ -58,12 +59,12 @@ var ironTasksListCmd = &cobra.Command{
 		}
 		t := tabby.New()
 		type taskStats struct {
-			Queued int
+			Queued    int
 			Preparing int
-			Timeout int
-			Running int
+			Timeout   int
+			Running   int
 			Cancelled int
-			Error int
+			Error     int
 			Completed int
 		}
 		taskEntry := map[string]taskStats{}
