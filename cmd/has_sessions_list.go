@@ -51,11 +51,12 @@ var hasSessionsListCmd = &cobra.Command{
 			return
 		}
 		t := tabby.New()
-		t.AddHeader("session id", "user", "region", "url")
+		t.AddHeader("session id", "user", "region", "state", "url")
 		for _, i := range sessions.Sessions {
 			t.AddLine(i.SessionID,
 				i.UserID,
 				i.Region,
+				i.State,
 				i.SessionURL)
 		}
 		t.Print()
