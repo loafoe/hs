@@ -27,6 +27,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -194,8 +195,15 @@ func (w *workspaceConfig) setDefault(workspace string) error {
 		}
 	}
 	w.Name = workspace
-	if err := os.Symlink(w.configFile(), current); err != nil {
-		return err
+	if runtime.GOOS != "windows" {
+		if err := os.Symlink(w.configFile(), current); err != nil {
+			return err
+		}
+	} else {
+		// Windows
+		if err := ioutil.WriteFile(current, []byte(w.configFile()), 0600); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -231,10 +239,18 @@ func (w *workspaceConfig) ensureDefault() {
 	currentWorkspaceFile := filepath.Join(w.root(), "current")
 	_, err := os.Stat(currentWorkspaceFile)
 	if os.IsNotExist(err) {
-		// Link to default
-		if err := os.Symlink("default.config.json", currentWorkspaceFile); err != nil {
-			fmt.Printf("Failed to set default workspace: %v\n", err)
-			os.Exit(1)
+		if runtime.GOOS != "windows" {
+			// Link to default
+			if err := os.Symlink("default.config.json", currentWorkspaceFile); err != nil {
+				fmt.Printf("Failed to set default workspace: %v\n", err)
+				os.Exit(1)
+			}
+		} else {
+			// Windows
+			if err := ioutil.WriteFile(currentWorkspaceFile, []byte(w.configFile()), 0600); err != nil {
+				fmt.Printf("Failed to set default workspace: %v\n", err)
+				os.Exit(1)
+			}
 		}
 	}
 }

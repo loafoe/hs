@@ -55,6 +55,9 @@ var hasSessionsCreateCmd = &cobra.Command{
 		}
 		hasImages := make([]hasImage, 0)
 		for _, i := range *images {
+			if !contains(i.Regions, currentWorkspace.HASRegion) { // Skip if no region matches
+				continue
+			}
 			hasImages = append(hasImages, hasImage{
 				Name:    i.Name,
 				ID:      i.ID,
