@@ -137,9 +137,19 @@ func (w *workspaceConfig) current() string {
 	if os.IsNotExist(err) {
 		return ""
 	}
-	currentConfig, err := os.Readlink(current)
-	if err != nil {
-		return ""
+	var currentConfig string
+	if runtime.GOOS != "window" {
+		currentConfig, err = os.Readlink(current)
+		if err != nil {
+			return ""
+		}
+	} else {
+		// Windows
+		data, err := ioutil.ReadFile(current)
+		if err != nil {
+			return ""
+		}
+		currentConfig = string(data)
 	}
 	return workspaceName(currentConfig)
 }

@@ -55,6 +55,7 @@ var hasSessionsDeleteCmd = &cobra.Command{
 			HideHelp:  true,
 			Templates: sessionSelectTemplate,
 			IsVimMode: false,
+			Stdout:    &bellSkipper{},
 		}
 		i, _, err := prompt.Run()
 		if err != nil {

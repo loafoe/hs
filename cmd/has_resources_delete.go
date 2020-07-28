@@ -57,6 +57,7 @@ var hasResourcesDeleteCmd = &cobra.Command{
 			HideHelp:  true,
 			Templates: resourceSelectTemplate,
 			IsVimMode: false,
+			Stdout:    &bellSkipper{},
 		}
 		i, _, err := prompt.Run()
 		if err != nil {

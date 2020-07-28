@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pkg/browser"
+
 	"github.com/manifoldco/promptui"
 	"github.com/philips-software/go-hsdp-api/has"
 
@@ -70,6 +72,7 @@ var hasSessionsCreateCmd = &cobra.Command{
 			HideHelp:  true,
 			Templates: imageSelectTemplate,
 			IsVimMode: false,
+			Stdout:    &bellSkipper{},
 		}
 		i, _, err := prompt.Run()
 		if err != nil {
@@ -85,7 +88,14 @@ var hasSessionsCreateCmd = &cobra.Command{
 			fmt.Printf("failed to create session: %v\n", err)
 			return
 		}
-		fmt.Printf("%v\n", sessions)
+		if len(sessions.Sessions) > 0 {
+			session := sessions.Sessions[0]
+			fmt.Printf("Started new session %s\n", session.SessionID)
+			if session.SessionURL != "" {
+				// Open in browser
+				_ = browser.OpenURL(session.SessionURL)
+			}
+		}
 	},
 }
 

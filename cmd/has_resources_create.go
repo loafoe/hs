@@ -74,6 +74,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 			HideHelp:  true,
 			Templates: imageSelectTemplate,
 			IsVimMode: false,
+			Stdout:    &bellSkipper{},
 		}
 		i, _, err := prompt.Run()
 		if err != nil {
@@ -96,6 +97,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 			Templates: resourceTypeSelectTemplate,
 			HideHelp:  true,
 			IsVimMode: false,
+			Stdout:    &bellSkipper{},
 		}
 		i, _, err = prompt.Run()
 		if err != nil {
