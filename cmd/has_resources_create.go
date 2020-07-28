@@ -85,7 +85,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 		res, resp, err := client.Resources.CreateResource(has.Resource{
 			ImageID:      image,
 			ResourceType: resourceType,
-			Region:       "eu-west-1",
+			Region:       currentWorkspace.HASRegion,
 			Count:        1,
 			ClusterTag:   "created-with-hs",
 			EBS: has.EBS{

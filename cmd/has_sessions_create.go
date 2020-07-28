@@ -41,7 +41,7 @@ var hasSessionsCreateCmd = &cobra.Command{
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
-		r := "eu-west-1"
+		r := currentWorkspace.HASRegion
 		images, _, err := client.Images.GetImages()
 		if err != nil {
 			fmt.Printf("error retrieving images list: %v\n", err)

@@ -46,7 +46,7 @@ var hasResourcesListCmd = &cobra.Command{
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
-		r := "eu-west-1"
+		r := currentWorkspace.HASRegion
 		resources, _, err := client.Resources.GetResources(&has.ResourceOptions{
 			Region: &r,
 		})

@@ -45,9 +45,9 @@ var hasCmd = &cobra.Command{
 
 var resourceSelectTemplate = &promptui.SelectTemplates{
 	Label:    "{{ . }}?",
-	Active:   "\U0001F4E6 {{ .Name | cyan }} ({{ .ResourceID | red }})",
-	Inactive: "  {{ .Name | cyan }} ({{ .ResourceID | red }})",
-	Selected: "\U0001F4E6 {{ .Name | red | cyan }}",
+	Active:   "\U0001F4E6 {{ .ResourceID | cyan }} ({{ .ImageID | red }})",
+	Inactive: "  {{ .ResourceID | cyan }} ({{ .ImageID | red }})",
+	Selected: "\U0001F4E6 {{ .ResourceID | red | cyan }}",
 }
 
 // 1F5A5
@@ -78,13 +78,23 @@ func init() {
 
 	hasCmd.PersistentFlags().StringP("url", "u", "", "The HAS backend server to use")
 	hasCmd.PersistentFlags().StringP("orgid", "o", "", "The organization ID (tenant) to use")
-	hasCmd.Flags().StringP("region", "r", "", "Use the specified region for operations")
+	hasCmd.PersistentFlags().StringP("has-region", "R", "us-east-1", "Use the specified HAS region for operations")
+	hasCmd.Flags().StringP("region", "r", "", "Use the specified IAM region for operations")
+
 }
 
 func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
 	url, _ := cmd.Flags().GetString("url")
 	orgID, _ := cmd.Flags().GetString("orgid")
 	region, _ := cmd.Flags().GetString("region")
+	hasRegion, _ := cmd.Flags().GetString("has-region")
+	if hasRegion == "" {
+		if currentWorkspace.HASRegion == "" {
+			currentWorkspace.HASRegion = "us-east-1" // TODO: remove hardcoding
+		}
+	} else {
+		currentWorkspace.HASRegion = hasRegion
+	}
 	if url == "" {
 		if currentWorkspace.HASConfig.HASURL == "" {
 			c, err := config.New(config.WithRegion(currentWorkspace.IAMRegion),
