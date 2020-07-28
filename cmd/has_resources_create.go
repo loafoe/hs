@@ -39,6 +39,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 	Short:   "Create a HAS resource",
 	Long:    `Creates a HAS resource.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		count, _ := cmd.Flags().GetInt("count")
 		client, err := getHASClient(cmd, args)
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
@@ -108,7 +109,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 			ImageID:      image,
 			ResourceType: resourceType,
 			Region:       currentWorkspace.HASRegion,
-			Count:        1,
+			Count:        count,
 			ClusterTag:   "created-with-hs",
 			EBS: has.EBS{
 				DeleteOnTermination: true,
@@ -131,5 +132,5 @@ var hasResourcesCreateCmd = &cobra.Command{
 func init() {
 	hasResourcesCmd.AddCommand(hasResourcesCreateCmd)
 
-	hasResourcesCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	hasResourcesCreateCmd.Flags().IntP("count", "c", 1, "Number of resources to create")
 }
