@@ -45,17 +45,15 @@ var hasCmd = &cobra.Command{
 
 var resourceSelectTemplate = &promptui.SelectTemplates{
 	Label:    "{{ . }}?",
-	Active:   "\U0001F4E6 {{ .ResourceID | cyan }} ({{ .ImageID | red }})",
-	Inactive: "  {{ .ResourceID | cyan }} ({{ .ImageID | red }})",
-	Selected: "\U0001F4E6 {{ .ResourceID | red | cyan }}",
+	Active:   "\U0001F4E6 {{ .ID | cyan }} ({{ .ImageID | red }})",
+	Inactive: "  {{ .ID | cyan }} ({{ .ImageID | red }})",
+	Selected: "\U0001F4E6 {{ .ID | red | cyan }}",
 }
-
-// 1F5A5
 
 var imageSelectTemplate = &promptui.SelectTemplates{
 	Label:    "{{ . }}?",
-	Active:   "\U0001F5BC {{ .Name | cyan }} ({{ .ID | red }})",
-	Inactive: "  {{ .Name | cyan }} ({{ .ID | red }})",
+	Active:   "\U0001F5BC {{ .Name | cyan }} ({{ .Regions | red }})",
+	Inactive: "  {{ .Name | cyan }} ({{ .Regions | red }})",
 	Selected: "\U0001F5BC {{ .Name | red | cyan }}",
 }
 
@@ -73,14 +71,29 @@ var sessionSelectTemplate = &promptui.SelectTemplates{
 	Selected: "\U0001F5A5 {{ .SessionID | red | cyan }}",
 }
 
+type hasImage struct {
+	ID      string
+	Name    string
+	Regions string
+}
+
 func init() {
 	rootCmd.AddCommand(hasCmd)
 
 	hasCmd.PersistentFlags().StringP("url", "u", "", "The HAS backend server to use")
 	hasCmd.PersistentFlags().StringP("orgid", "o", "", "The organization ID (tenant) to use")
-	hasCmd.PersistentFlags().StringP("has-region", "R", "us-east-1", "Use the specified HAS region for operations")
+	hasCmd.PersistentFlags().StringP("has-region", "R", "", "Use the specified HAS region for operations")
 	hasCmd.Flags().StringP("region", "r", "", "Use the specified IAM region for operations")
 
+}
+
+func contains(a []string, b string) bool {
+	for _, r := range a {
+		if r == b {
+			return true
+		}
+	}
+	return false
 }
 
 func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
@@ -90,7 +103,7 @@ func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
 	hasRegion, _ := cmd.Flags().GetString("has-region")
 	if hasRegion == "" {
 		if currentWorkspace.HASRegion == "" {
-			currentWorkspace.HASRegion = "us-east-1" // TODO: remove hardcoding
+			return nil, fmt.Errorf("no HAS region configured")
 		}
 	} else {
 		currentWorkspace.HASRegion = hasRegion
@@ -147,5 +160,4 @@ func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
 		Debug:    true,
 		DebugLog: "/tmp/hs_has.log",
 	})
-
 }

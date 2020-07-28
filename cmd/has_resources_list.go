@@ -46,22 +46,20 @@ var hasResourcesListCmd = &cobra.Command{
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
-		r := currentWorkspace.HASRegion
-		resources, _, err := client.Resources.GetResources(&has.ResourceOptions{
-			Region: &r,
-		})
+		//r := currentWorkspace.HASRegion
+		resources, _, err := client.Resources.GetResources(&has.ResourceOptions{})
 		if err != nil {
 			fmt.Printf("error retrieving resources list: %v\n", err)
 			return
 		}
 		t := tabby.New()
-		t.AddHeader("resource id", "region", "state", "image", "dns")
+		t.AddHeader("resource id", "region", "state", "image", "type")
 		for _, r := range *resources {
-			t.AddLine(r.ID,
+			t.AddLine(r.ResourceID,
 				r.Region,
 				r.State,
 				r.ImageID,
-				r.DNS)
+				r.ResourceType)
 		}
 		t.Print()
 		if len(*resources) == 0 {

@@ -35,7 +35,8 @@ var hasConfigCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		url, _ := cmd.Flags().GetString("url")
 		orgID, _ := cmd.Flags().GetString("orgid")
-		if url == "" && orgID == "" {
+		hasRegion, _ := cmd.Flags().GetString("has-region")
+		if url == "" && orgID == "" && hasRegion == "" {
 			_ = cmd.Help()
 			return
 		}
@@ -44,6 +45,9 @@ var hasConfigCmd = &cobra.Command{
 		}
 		if orgID != "" {
 			currentWorkspace.HASConfig.OrgID = orgID
+		}
+		if hasRegion != "" {
+			currentWorkspace.HASRegion = hasRegion
 		}
 		if err := currentWorkspace.save(); err == nil {
 			fmt.Printf("OK\n")

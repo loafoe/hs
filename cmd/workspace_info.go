@@ -51,7 +51,9 @@ var workspaceInfoCmd = &cobra.Command{
 		fmt.Printf("IAM Region:           %s\n", currentWorkspace.IAMRegion)
 		fmt.Printf("IAM Environment:      %s\n", currentWorkspace.IAMEnvironment)
 		if currentWorkspace.HASConfig.HASURL != "" {
+			fmt.Printf("HAS Region:           %s\n", currentWorkspace.HASRegion)
 			fmt.Printf("HAS URL:              %s\n", currentWorkspace.HASConfig.HASURL)
+
 		}
 		fmt.Printf("\n")
 	},

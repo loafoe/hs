@@ -33,7 +33,7 @@ import (
 // hasResourcesDeleteCmd represents the delete command
 var hasResourcesDeleteCmd = &cobra.Command{
 	Use:     "delete",
-	Aliases: []string{"rm"},
+	Aliases: []string{"d", "rm"},
 	Short:   "Delete a HAS resource",
 	Long:    `Deletes a HAS resource.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -52,7 +52,7 @@ var hasResourcesDeleteCmd = &cobra.Command{
 			return
 		}
 		prompt := promptui.Select{
-			Label:     "Select Image",
+			Label:     "Select resource",
 			Items:     *resources,
 			HideHelp:  true,
 			Templates: resourceSelectTemplate,
@@ -69,7 +69,7 @@ var hasResourcesDeleteCmd = &cobra.Command{
 			return
 		}
 		if res != nil {
-			fmt.Printf("resource delete: %v\n", res)
+			fmt.Printf("resource deleted: %s\n", resourceID)
 			return
 		}
 		fmt.Printf("unexpected error deleting resource: %v\n", resp)

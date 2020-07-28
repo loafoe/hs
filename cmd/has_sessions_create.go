@@ -23,6 +23,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/manifoldco/promptui"
 	"github.com/philips-software/go-hsdp-api/has"
@@ -32,9 +33,10 @@ import (
 
 // hasSessionsCreateCmd represents the create command
 var hasSessionsCreateCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a HAS session",
-	Long:  `Creates a HAS session.`,
+	Use:     "create",
+	Aliases: []string{"c", "n", "new"},
+	Short:   "Create a HAS session",
+	Long:    `Creates a HAS session.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := getHASClient(cmd, args)
 		if err != nil {
@@ -47,9 +49,21 @@ var hasSessionsCreateCmd = &cobra.Command{
 			fmt.Printf("error retrieving images list: %v\n", err)
 			return
 		}
+		if len(*images) == 0 {
+			fmt.Printf("No images found\n")
+			return
+		}
+		hasImages := make([]hasImage, 0)
+		for _, i := range *images {
+			hasImages = append(hasImages, hasImage{
+				Name:    i.Name,
+				ID:      i.ID,
+				Regions: strings.Join(i.Regions, ","),
+			})
+		}
 		prompt := promptui.Select{
 			Label:     "Select Image",
-			Items:     *images,
+			Items:     hasImages,
 			HideHelp:  true,
 			Templates: imageSelectTemplate,
 			IsVimMode: false,
@@ -58,7 +72,7 @@ var hasSessionsCreateCmd = &cobra.Command{
 		if err != nil {
 			return
 		}
-		imageID := (*images)[i].ID
+		imageID := hasImages[i].ID
 		sessions, _, err := client.Sessions.CreateSession(currentWorkspace.IAMUserUUID, has.Session{
 			ImageID:    imageID,
 			Region:     r,

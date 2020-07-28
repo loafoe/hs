@@ -23,6 +23,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/philips-software/go-hsdp-api/has"
 
@@ -34,7 +35,7 @@ import (
 // hasResourcesCreateCmd represents the create command
 var hasResourcesCreateCmd = &cobra.Command{
 	Use:     "create",
-	Aliases: []string{"c"},
+	Aliases: []string{"c", "n", "new"},
 	Short:   "Create a HAS resource",
 	Long:    `Creates a HAS resource.`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -48,9 +49,28 @@ var hasResourcesCreateCmd = &cobra.Command{
 			fmt.Printf("error retrieving image list: %v\n", err)
 			return
 		}
+		if len(*images) == 0 {
+			fmt.Printf("No images found\n")
+			return
+		}
+		hasImages := make([]hasImage, 0)
+		for _, i := range *images {
+			if !contains(i.Regions, currentWorkspace.HASRegion) { // Skip if no region matches
+				continue
+			}
+			hasImages = append(hasImages, hasImage{
+				Name:    i.Name,
+				ID:      i.ID,
+				Regions: strings.Join(i.Regions, ","),
+			})
+		}
+		if len(hasImages) == 0 {
+			fmt.Printf("No images for region %s found\n", currentWorkspace.HASRegion)
+			return
+		}
 		prompt := promptui.Select{
 			Label:     "Select Image",
-			Items:     *images,
+			Items:     hasImages,
 			HideHelp:  true,
 			Templates: imageSelectTemplate,
 			IsVimMode: false,
@@ -59,7 +79,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 		if err != nil {
 			return
 		}
-		image := (*images)[i].ID
+		image := hasImages[i].ID
 
 		var resourceTypes = []struct {
 			Name string
@@ -109,5 +129,5 @@ var hasResourcesCreateCmd = &cobra.Command{
 func init() {
 	hasResourcesCmd.AddCommand(hasResourcesCreateCmd)
 
-	// hasResourcesCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	hasResourcesCreateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
