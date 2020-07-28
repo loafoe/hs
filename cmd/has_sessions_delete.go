@@ -23,45 +23,58 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/cheynewallace/tabby"
-
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 )
 
-// ironTasksListCmd represents the list command
-var hasImageListCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l", "ls"},
-	Short:   "List available has images",
-	Long:    `Lists the available list of HAS machine images`,
+// hasSessionsDeleteCmd represents the delete command
+var hasSessionsDeleteCmd = &cobra.Command{
+	Use:     "delete",
+	Aliases: []string{"d", "rm"},
+	Short:   "Delete a HAS session",
+	Long:    `Deletes a HAS session.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := getHASClient(cmd, args)
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
-		images, _, err := client.Images.GetImages()
+		sessions, _, err := client.Sessions.GetSessions()
 		if err != nil {
-			fmt.Printf("error retrieving image list: %v\n", err)
+			fmt.Printf("error retrieving session list: %v\n", err)
 			return
 		}
-		t := tabby.New()
-		t.AddHeader("image id", "name", "regions")
-		for _, i := range *images {
-			t.AddLine(i.ID,
-				i.Name,
-				strings.Join(i.Regions, ","))
+		if sessions == nil || len(sessions.Sessions) == 0 {
+			fmt.Printf("no sessions found\n")
+			return
 		}
-		t.Print()
-		if len(*images) == 0 {
-			fmt.Printf("no images found\n")
+		prompt := promptui.Select{
+			Label:     "Select session",
+			Items:     sessions.Sessions,
+			HideHelp:  true,
+			Templates: sessionSelectTemplate,
+			IsVimMode: false,
 		}
-		fmt.Printf("\n")
+		i, _, err := prompt.Run()
+		if err != nil {
+			return
+		}
+		sessionID := sessions.Sessions[i].SessionID
+		ok, resp, err := client.Sessions.DeleteSession(currentWorkspace.IAMUserUUID)
+		if err != nil {
+			fmt.Printf("error deleting session %v: %v\n", sessionID, err)
+			return
+		}
+		if ok {
+			fmt.Printf("session deleted: %v\n", sessionID)
+			return
+		}
+		fmt.Printf("unexpected error deleting session: %v\n", resp)
 	},
 }
 
 func init() {
-	hasImagesCmd.AddCommand(hasImageListCmd)
+	hasSessionsCmd.AddCommand(hasSessionsDeleteCmd)
+
 }

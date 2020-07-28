@@ -23,45 +23,60 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/cheynewallace/tabby"
+	"github.com/manifoldco/promptui"
+	"github.com/philips-software/go-hsdp-api/has"
 
 	"github.com/spf13/cobra"
 )
 
-// ironTasksListCmd represents the list command
-var hasImageListCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l", "ls"},
-	Short:   "List available has images",
-	Long:    `Lists the available list of HAS machine images`,
+// hasResourcesDeleteCmd represents the delete command
+var hasResourcesDeleteCmd = &cobra.Command{
+	Use:     "delete",
+	Aliases: []string{"rm"},
+	Short:   "Delete a HAS resource",
+	Long:    `Deletes a HAS resource.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := getHASClient(cmd, args)
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
-		images, _, err := client.Images.GetImages()
+		resources, _, err := client.Resources.GetResources(&has.ResourceOptions{})
 		if err != nil {
 			fmt.Printf("error retrieving image list: %v\n", err)
 			return
 		}
-		t := tabby.New()
-		t.AddHeader("image id", "name", "regions")
-		for _, i := range *images {
-			t.AddLine(i.ID,
-				i.Name,
-				strings.Join(i.Regions, ","))
+		if len(*resources) == 0 {
+			fmt.Printf("no resources found\n")
+			return
 		}
-		t.Print()
-		if len(*images) == 0 {
-			fmt.Printf("no images found\n")
+		prompt := promptui.Select{
+			Label:     "Select Image",
+			Items:     *resources,
+			HideHelp:  true,
+			Templates: resourceSelectTemplate,
+			IsVimMode: false,
 		}
-		fmt.Printf("\n")
+		i, _, err := prompt.Run()
+		if err != nil {
+			return
+		}
+		resourceID := (*resources)[i].ResourceID
+		res, resp, err := client.Resources.DeleteResource(resourceID)
+		if err != nil {
+			fmt.Printf("error deleting resource: %v\n", err)
+			return
+		}
+		if res != nil {
+			fmt.Printf("resource delete: %v\n", res)
+			return
+		}
+		fmt.Printf("unexpected error deleting resource: %v\n", resp)
 	},
 }
 
 func init() {
-	hasImagesCmd.AddCommand(hasImageListCmd)
+	hasResourcesCmd.AddCommand(hasResourcesDeleteCmd)
+
 }

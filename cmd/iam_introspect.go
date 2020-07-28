@@ -52,6 +52,7 @@ var iamIntrospectCmd = &cobra.Command{
 		}
 		iamClient.SetTokens(currentWorkspace.IAMAccessToken,
 			currentWorkspace.IAMRefreshToken,
+			currentWorkspace.IAMIDToken,
 			currentWorkspace.IAMAccessTokenExpires)
 		introspect, _, err := iamClient.Introspect()
 		if err != nil {

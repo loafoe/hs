@@ -23,45 +23,56 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
-	"github.com/cheynewallace/tabby"
+	"github.com/manifoldco/promptui"
+	"github.com/philips-software/go-hsdp-api/has"
 
 	"github.com/spf13/cobra"
 )
 
-// ironTasksListCmd represents the list command
-var hasImageListCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l", "ls"},
-	Short:   "List available has images",
-	Long:    `Lists the available list of HAS machine images`,
+// hasSessionsCreateCmd represents the create command
+var hasSessionsCreateCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create a HAS session",
+	Long:  `Creates a HAS session.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := getHASClient(cmd, args)
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
+		r := "eu-west-1"
 		images, _, err := client.Images.GetImages()
 		if err != nil {
-			fmt.Printf("error retrieving image list: %v\n", err)
+			fmt.Printf("error retrieving images list: %v\n", err)
 			return
 		}
-		t := tabby.New()
-		t.AddHeader("image id", "name", "regions")
-		for _, i := range *images {
-			t.AddLine(i.ID,
-				i.Name,
-				strings.Join(i.Regions, ","))
+		prompt := promptui.Select{
+			Label:     "Select Image",
+			Items:     *images,
+			HideHelp:  true,
+			Templates: imageSelectTemplate,
+			IsVimMode: false,
 		}
-		t.Print()
-		if len(*images) == 0 {
-			fmt.Printf("no images found\n")
+		i, _, err := prompt.Run()
+		if err != nil {
+			return
 		}
-		fmt.Printf("\n")
+		imageID := (*images)[i].ID
+		sessions, _, err := client.Sessions.CreateSession(currentWorkspace.IAMUserUUID, has.Session{
+			ImageID:    imageID,
+			Region:     r,
+			ClusterTag: "created-with-hs",
+		})
+		if err != nil {
+			fmt.Printf("failed to create session: %v\n", err)
+			return
+		}
+		fmt.Printf("%v\n", sessions)
 	},
 }
 
 func init() {
-	hasImagesCmd.AddCommand(hasImageListCmd)
+	hasSessionsCmd.AddCommand(hasSessionsCreateCmd)
+
 }

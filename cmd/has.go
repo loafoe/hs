@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/manifoldco/promptui"
+
 	"github.com/philips-software/go-hsdp-api/config"
 	"github.com/philips-software/go-hsdp-api/has"
 	"github.com/philips-software/go-hsdp-api/iam"
@@ -39,6 +41,36 @@ var hasCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
+}
+
+var resourceSelectTemplate = &promptui.SelectTemplates{
+	Label:    "{{ . }}?",
+	Active:   "\U0001F4E6 {{ .Name | cyan }} ({{ .ResourceID | red }})",
+	Inactive: "  {{ .Name | cyan }} ({{ .ResourceID | red }})",
+	Selected: "\U0001F4E6 {{ .Name | red | cyan }}",
+}
+
+// 1F5A5
+
+var imageSelectTemplate = &promptui.SelectTemplates{
+	Label:    "{{ . }}?",
+	Active:   "\U0001F5BC {{ .Name | cyan }} ({{ .ID | red }})",
+	Inactive: "  {{ .Name | cyan }} ({{ .ID | red }})",
+	Selected: "\U0001F5BC {{ .Name | red | cyan }}",
+}
+
+var resourceTypeSelectTemplate = &promptui.SelectTemplates{
+	Label:    "{{ . }}?",
+	Active:   "\U0001F5A5 {{ .Name | cyan }}",
+	Inactive: "  {{ .Name | cyan }}",
+	Selected: "\U0001F5A5 {{ .Name | red | cyan }}",
+}
+
+var sessionSelectTemplate = &promptui.SelectTemplates{
+	Label:    "{{ . }}?",
+	Active:   "\U0001F5A5 {{ .SessionID | cyan }}",
+	Inactive: "  {{ .SessionID | cyan }}",
+	Selected: "\U0001F5A5 {{ .SessionID | red | cyan }}",
 }
 
 func init() {
@@ -85,6 +117,7 @@ func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
 	}
 	iamClient.SetTokens(currentWorkspace.IAMAccessToken,
 		currentWorkspace.IAMRefreshToken,
+		currentWorkspace.IAMIDToken,
 		currentWorkspace.IAMAccessTokenExpires)
 	if orgID == "" {
 		if currentWorkspace.HASConfig.OrgID == "" {

@@ -22,46 +22,20 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-	"strings"
-
-	"github.com/cheynewallace/tabby"
-
 	"github.com/spf13/cobra"
 )
 
-// ironTasksListCmd represents the list command
-var hasImageListCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l", "ls"},
-	Short:   "List available has images",
-	Long:    `Lists the available list of HAS machine images`,
+// hasSessionsCmd represents the sessions command
+var hasSessionsCmd = &cobra.Command{
+	Use:     "sessions",
+	Aliases: []string{"s"},
+	Short:   "Manage HAS sessions",
+	Long:    `Manages HAS saessions.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := getHASClient(cmd, args)
-		if err != nil {
-			fmt.Printf("error initializing HAS client: %v\n", err)
-			return
-		}
-		images, _, err := client.Images.GetImages()
-		if err != nil {
-			fmt.Printf("error retrieving image list: %v\n", err)
-			return
-		}
-		t := tabby.New()
-		t.AddHeader("image id", "name", "regions")
-		for _, i := range *images {
-			t.AddLine(i.ID,
-				i.Name,
-				strings.Join(i.Regions, ","))
-		}
-		t.Print()
-		if len(*images) == 0 {
-			fmt.Printf("no images found\n")
-		}
-		fmt.Printf("\n")
+		_ = cmd.Help()
 	},
 }
 
 func init() {
-	hasImagesCmd.AddCommand(hasImageListCmd)
+	hasCmd.AddCommand(hasSessionsCmd)
 }

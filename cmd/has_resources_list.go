@@ -33,7 +33,7 @@ import (
 // hasResourcesListCmd represents the list command
 var hasResourcesListCmd = &cobra.Command{
 	Use:     "list",
-	Aliases: []string{"l", "li"},
+	Aliases: []string{"l", "ls"},
 	Short:   "List HAS resources",
 	Long:    `Lists HAS resources`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -46,8 +46,9 @@ var hasResourcesListCmd = &cobra.Command{
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
+		r := "eu-west-1"
 		resources, _, err := client.Resources.GetResources(&has.ResourceOptions{
-			Region: &currentWorkspace.DefaultRegion,
+			Region: &r,
 		})
 		if err != nil {
 			fmt.Printf("error retrieving resources list: %v\n", err)
@@ -65,9 +66,6 @@ var hasResourcesListCmd = &cobra.Command{
 		t.Print()
 		if len(*resources) == 0 {
 			fmt.Printf("no resources found\n")
-		}
-		for _, resource := range *resources {
-			fmt.Printf("%s -- %s\n", resource.ID, resource.State)
 		}
 	},
 }

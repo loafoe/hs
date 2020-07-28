@@ -95,22 +95,34 @@ var iamLoginCmd = &cobra.Command{
 		err = browser.OpenURL(baseIAMURL + "/authorize/oauth2/authorize?response_type=code&client_id=hsappclient&redirect_uri=http://localhost:35444/callback")
 		if err != nil {
 			fmt.Printf("failed to open browser login: %v\n", err)
-			os.Exit(1)
+			return
 		}
+		done := make(chan bool)
+		go func(done chan bool) {
+			select {
+			case <-done:
+				return
+			case <-time.After(5 * time.Minute):
+				fmt.Printf("timed out waiting for login. Exiting ...\n")
+				_ = e.Shutdown(context.Background())
+			}
+		}(done)
 		_ = e.Start(":35444")
 		if !loginSuccess {
 			fmt.Printf("login failed. Please try again ...\n")
-			os.Exit(1)
+			return
 		}
 
 		introspect, _, err := iamClient.Introspect()
 		if err != nil {
 			fmt.Printf("error performing introspect: %v\n", err)
-			os.Exit(1)
+			return
 		}
 		fmt.Printf("logged in as: %s\n", introspect.Username)
 		currentWorkspace.IAMAccessToken = iamClient.Token()
 		currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
+		currentWorkspace.IAMIDToken = iamClient.IDToken()
+		currentWorkspace.IAMUserUUID = introspect.Sub
 		currentWorkspace.IAMRegion = region
 		currentWorkspace.IAMEnvironment = environment
 		currentWorkspace.IAMAccessTokenExpires = introspect.Expires

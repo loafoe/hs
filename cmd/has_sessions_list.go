@@ -23,45 +23,57 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/cheynewallace/tabby"
 
 	"github.com/spf13/cobra"
 )
 
-// ironTasksListCmd represents the list command
-var hasImageListCmd = &cobra.Command{
+// hasSessionsListCmd represents the list command
+var hasSessionsListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l", "ls"},
-	Short:   "List available has images",
-	Long:    `Lists the available list of HAS machine images`,
+	Short:   "List HAS sessions",
+	Long:    `Lists HAS sessions.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client, err := getHASClient(cmd, args)
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
 			return
 		}
-		images, _, err := client.Images.GetImages()
+		sessions, _, err := client.Sessions.GetSessions()
 		if err != nil {
 			fmt.Printf("error retrieving image list: %v\n", err)
 			return
 		}
+		if sessions == nil || len(sessions.Sessions) == 0 {
+			fmt.Printf("no sessions found\n")
+			return
+		}
 		t := tabby.New()
-		t.AddHeader("image id", "name", "regions")
-		for _, i := range *images {
-			t.AddLine(i.ID,
-				i.Name,
-				strings.Join(i.Regions, ","))
+		t.AddHeader("session id", "user", "region", "url")
+		for _, i := range sessions.Sessions {
+			t.AddLine(i.SessionID,
+				i.UserID,
+				i.Region,
+				i.SessionURL)
 		}
 		t.Print()
-		if len(*images) == 0 {
-			fmt.Printf("no images found\n")
-		}
+
 		fmt.Printf("\n")
 	},
 }
 
 func init() {
-	hasImagesCmd.AddCommand(hasImageListCmd)
+	hasSessionsCmd.AddCommand(hasSessionsListCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// hasSessionsListCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// hasSessionsListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
