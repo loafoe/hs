@@ -22,54 +22,29 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/spf13/cobra"
 )
 
-// iamCmd represents the iam command
-var iamCmd = &cobra.Command{
-	Use:   "iam",
-	Short: "Interact with HSDP IAM resources",
-	Long:  `Interact with HSDP IAM resources`,
+// iamOrgsCmd represents the orgs command
+var iamOrgsCmd = &cobra.Command{
+	Use:   "orgs",
+	Short: "Manage IAM organizations",
+	Long:  `Manage IAM organizations.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(iamCmd)
+	iamCmd.AddCommand(iamOrgsCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// iamCmd.PersistentFlags().String("foo", "", "A help for foo")
-	iamCmd.PersistentFlags().StringP("region", "r", "", "HSDP region to use (default: us-east)")
-	iamCmd.PersistentFlags().StringP("environment", "e", "", "HSDP environment to use (default: client-test)")
+	// iamOrgsCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// iamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func getIAMClient(cmd *cobra.Command) (*iam.Client, error) {
-	iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-		Region:         currentWorkspace.IAMRegion,
-		Environment:    currentWorkspace.IAMEnvironment,
-		OAuth2ClientID: clientID,
-		OAuth2Secret:   clientSecret,
-		Debug:          true,
-		DebugLog:       "/tmp/hs_has_iam.log",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("iam client: %w", err)
-	}
-	iamClient.SetTokens(currentWorkspace.IAMAccessToken,
-		currentWorkspace.IAMRefreshToken,
-		currentWorkspace.IAMIDToken,
-		currentWorkspace.IAMAccessTokenExpires)
-	return iamClient, nil
+	// iamOrgsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

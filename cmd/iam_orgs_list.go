@@ -23,53 +23,48 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
+	"strings"
 
-	"github.com/philips-software/go-hsdp-api/iam"
+	"github.com/cheynewallace/tabby"
 	"github.com/spf13/cobra"
 )
 
-// iamCmd represents the iam command
-var iamCmd = &cobra.Command{
-	Use:   "iam",
-	Short: "Interact with HSDP IAM resources",
-	Long:  `Interact with HSDP IAM resources`,
+// iamOrgsListCmd represents the list command
+var iamOrgsListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List IAM organizations",
+	Long:  `Lists IAM organizations you have access to.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		_ = cmd.Help()
+		iamClient, err := getIAMClient(cmd)
+		if err != nil {
+			fmt.Printf("error initalizing IAM client: %v\n", err)
+			return
+		}
+		introspect, _, err := iamClient.Introspect()
+		if err != nil {
+			fmt.Printf("error performing IAM introspect: %v\n", err)
+			return
+		}
+		t := tabby.New()
+		t.AddHeader("organization", "roles")
+		for _, org := range introspect.Organizations.OrganizationList {
+			t.AddLine(org.OrganizationName,
+				strings.Join(org.Roles, ","))
+		}
+		t.Print()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(iamCmd)
+	iamOrgsCmd.AddCommand(iamOrgsListCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// iamCmd.PersistentFlags().String("foo", "", "A help for foo")
-	iamCmd.PersistentFlags().StringP("region", "r", "", "HSDP region to use (default: us-east)")
-	iamCmd.PersistentFlags().StringP("environment", "e", "", "HSDP environment to use (default: client-test)")
+	// iamOrgsListCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// iamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func getIAMClient(cmd *cobra.Command) (*iam.Client, error) {
-	iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-		Region:         currentWorkspace.IAMRegion,
-		Environment:    currentWorkspace.IAMEnvironment,
-		OAuth2ClientID: clientID,
-		OAuth2Secret:   clientSecret,
-		Debug:          true,
-		DebugLog:       "/tmp/hs_has_iam.log",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("iam client: %w", err)
-	}
-	iamClient.SetTokens(currentWorkspace.IAMAccessToken,
-		currentWorkspace.IAMRefreshToken,
-		currentWorkspace.IAMIDToken,
-		currentWorkspace.IAMAccessTokenExpires)
-	return iamClient, nil
+	// iamOrgsListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

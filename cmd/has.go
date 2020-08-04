@@ -23,13 +23,11 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/manifoldco/promptui"
 
 	"github.com/philips-software/go-hsdp-api/config"
 	"github.com/philips-software/go-hsdp-api/has"
-	"github.com/philips-software/go-hsdp-api/iam"
 	"github.com/spf13/cobra"
 )
 
@@ -45,9 +43,9 @@ var hasCmd = &cobra.Command{
 
 var resourceSelectTemplate = &promptui.SelectTemplates{
 	Label:    "{{ . }}?",
-	Active:   "\U0001F4E6 {{ .ID | cyan }} ({{ .ImageID | red }})",
-	Inactive: "  {{ .ID | cyan }} ({{ .ImageID | red }})",
-	Selected: "\U0001F4E6 {{ .ID | red | cyan }}",
+	Active:   "\U0001F4E6 {{ .ResourceID | cyan }} ({{ .ImageID | red }} {{ .State | red }})",
+	Inactive: "  {{ .ResourceID | cyan }} ({{ .ImageID | red }} {{ .State | red }})",
+	Selected: "\U0001F4E6 {{ .ResourceID | red | cyan }}",
 }
 
 var imageSelectTemplate = &promptui.SelectTemplates{
@@ -127,21 +125,10 @@ func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
 	} else {
 		currentWorkspace.HASConfig.HASURL = url
 	}
-	iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-		Region:         currentWorkspace.IAMRegion,
-		Environment:    currentWorkspace.IAMEnvironment,
-		OAuth2ClientID: clientID,
-		OAuth2Secret:   clientSecret,
-		Debug:          true,
-		DebugLog:       "/tmp/hs_has_iam.log",
-	})
+	iamClient, err := getIAMClient(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("iam client: %w", err)
 	}
-	iamClient.SetTokens(currentWorkspace.IAMAccessToken,
-		currentWorkspace.IAMRefreshToken,
-		currentWorkspace.IAMIDToken,
-		currentWorkspace.IAMAccessTokenExpires)
 	if orgID == "" {
 		if currentWorkspace.HASConfig.OrgID == "" {
 			introspect, _, err := iamClient.Introspect()
