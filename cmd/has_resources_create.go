@@ -70,7 +70,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 			return
 		}
 		prompt := promptui.Select{
-			Label:     "Select Image",
+			Label:     "Select image to use",
 			Items:     hasImages,
 			HideHelp:  true,
 			Templates: imageSelectTemplate,
@@ -93,7 +93,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 		}
 
 		prompt = promptui.Select{
-			Label:     "Select resource type",
+			Label:     "Select resource type to create",
 			Items:     resourceTypes,
 			Templates: resourceTypeSelectTemplate,
 			HideHelp:  true,
@@ -105,7 +105,7 @@ var hasResourcesCreateCmd = &cobra.Command{
 			return
 		}
 		resourceType := resourceTypes[i].Name
-		res, resp, err := client.Resources.CreateResource(has.Resource{
+		resources, resp, err := client.Resources.CreateResource(has.Resource{
 			ImageID:      image,
 			ResourceType: resourceType,
 			Region:       currentWorkspace.HASRegion,
@@ -121,11 +121,13 @@ var hasResourcesCreateCmd = &cobra.Command{
 			fmt.Printf("failed to create resources: %v\n", err)
 			return
 		}
-		if res == nil {
+		if resources == nil {
 			fmt.Printf("failed to create resource: %v\n", resp)
 			return
 		}
-		fmt.Printf("resource %s creation started, state: %s\n", res.ID, res.State)
+		for _, r := range *resources {
+			fmt.Printf("resource %s created, state: %s\n", r.ResourceID, r.State)
+		}
 	},
 }
 

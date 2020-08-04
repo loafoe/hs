@@ -67,7 +67,7 @@ var hasSessionsCreateCmd = &cobra.Command{
 			})
 		}
 		prompt := promptui.Select{
-			Label:     "Select Image",
+			Label:     "Select image to use",
 			Items:     hasImages,
 			HideHelp:  true,
 			Templates: imageSelectTemplate,

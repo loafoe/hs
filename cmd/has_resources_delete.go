@@ -52,7 +52,7 @@ var hasResourcesDeleteCmd = &cobra.Command{
 			return
 		}
 		prompt := promptui.Select{
-			Label:     "Select resource",
+			Label:     "Select resource to delete",
 			Items:     *resources,
 			HideHelp:  true,
 			Templates: resourceSelectTemplate,

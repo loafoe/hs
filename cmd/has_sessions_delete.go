@@ -50,7 +50,7 @@ var hasSessionsDeleteCmd = &cobra.Command{
 			return
 		}
 		prompt := promptui.Select{
-			Label:     "Select session",
+			Label:     "Select session to delete",
 			Items:     sessions.Sessions,
 			HideHelp:  true,
 			Templates: sessionSelectTemplate,
