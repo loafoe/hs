@@ -27,9 +27,10 @@ import (
 
 // iamOrgsCmd represents the orgs command
 var iamOrgsCmd = &cobra.Command{
-	Use:   "orgs",
-	Short: "Manage IAM organizations",
-	Long:  `Manage IAM organizations.`,
+	Use:     "orgs",
+	Aliases: []string{"o"},
+	Short:   "Manage IAM organizations",
+	Long:    `Manage IAM organizations.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

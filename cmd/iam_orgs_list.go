@@ -23,7 +23,6 @@ package cmd
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/cheynewallace/tabby"
 	"github.com/spf13/cobra"
@@ -31,9 +30,10 @@ import (
 
 // iamOrgsListCmd represents the list command
 var iamOrgsListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List IAM organizations",
-	Long:  `Lists IAM organizations you have access to.`,
+	Use:     "list",
+	Aliases: []string{"l", "ls"},
+	Short:   "List IAM organizations",
+	Long:    `Lists IAM organizations you have access to.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		iamClient, err := getIAMClient(cmd)
 		if err != nil {
@@ -46,10 +46,10 @@ var iamOrgsListCmd = &cobra.Command{
 			return
 		}
 		t := tabby.New()
-		t.AddHeader("organization", "roles")
+		t.AddHeader("organization", "id")
 		for _, org := range introspect.Organizations.OrganizationList {
 			t.AddLine(org.OrganizationName,
-				strings.Join(org.Roles, ","))
+				org.OrganizationID)
 		}
 		t.Print()
 	},
