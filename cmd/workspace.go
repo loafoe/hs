@@ -178,6 +178,21 @@ func (w *workspaceConfig) save() error {
 	return nil
 }
 
+func loadWorkspaceConfig(workspace string) (*workspaceConfig, error) {
+	newTarget := &workspaceConfig{}
+	newTarget.Name = workspace
+	data, err := ioutil.ReadFile(newTarget.configFile())
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(data, newTarget)
+	if err != nil {
+		return nil, err
+	}
+	newTarget.Name = workspace
+	return newTarget, nil
+}
+
 func (w *workspaceConfig) load(workspace string) error {
 	w.Lock()
 	defer w.Unlock()

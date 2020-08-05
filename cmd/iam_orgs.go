@@ -28,7 +28,7 @@ import (
 // iamOrgsCmd represents the orgs command
 var iamOrgsCmd = &cobra.Command{
 	Use:     "orgs",
-	Aliases: []string{"o"},
+	Aliases: []string{"o", "org"},
 	Short:   "Manage IAM organizations",
 	Long:    `Manage IAM organizations.`,
 	Run: func(cmd *cobra.Command, args []string) {

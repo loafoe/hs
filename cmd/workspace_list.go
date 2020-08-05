@@ -25,6 +25,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cheynewallace/tabby"
+
 	"github.com/spf13/cobra"
 )
 
@@ -40,13 +42,18 @@ var workspaceListCmd = &cobra.Command{
 			fmt.Printf("failed to list workspaces: %v\n", err)
 			os.Exit(1)
 		}
-		for _, l := range list {
-			if l == current {
-				fmt.Printf("* %s\n", l)
-			} else {
-				fmt.Printf("  %s\n", l)
+		t := tabby.New()
+		t.AddHeader("workspace", "region", "environment")
+		for _, w := range list {
+			if config, err := loadWorkspaceConfig(w); err == nil {
+				name := "  " + config.Name
+				if w == current {
+					name = "✓ " + config.Name
+				}
+				t.AddLine(name, config.DefaultRegion, config.DefaultEnvironment)
 			}
 		}
+		t.Print()
 	},
 }
 
