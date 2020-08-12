@@ -88,7 +88,7 @@ func (w *workspaceConfig) iamLoginExpired() bool {
 	return expired.Before(time.Now())
 }
 
-func (w *workspaceConfig) root() string {
+func workspaceRoot() string {
 	// Find home directory.
 	home, err := homedir.Dir()
 	if err != nil {
@@ -110,12 +110,12 @@ func (w *workspaceConfig) configFile(name ...string) string {
 	if len(name) > 0 {
 		useName = name[0]
 	}
-	return filepath.Join(w.root(), useName+".config.json")
+	return filepath.Join(workspaceRoot(), useName+".config.json")
 }
 
 func (w *workspaceConfig) list() ([]string, string, error) {
 	workspaceList := make([]string, 0)
-	glob := filepath.Join(w.root(), "*.config.json")
+	glob := filepath.Join(workspaceRoot(), "*.config.json")
 	list, err := filepath.Glob(glob)
 	if err != nil {
 		return list, "", err
@@ -123,7 +123,7 @@ func (w *workspaceConfig) list() ([]string, string, error) {
 	for _, l := range list {
 		workspaceList = append(workspaceList, workspaceName(l))
 	}
-	return workspaceList, w.current(), nil
+	return workspaceList, currentWorkspaceName(), nil
 }
 
 func workspaceName(file string) string {
@@ -131,8 +131,8 @@ func workspaceName(file string) string {
 	return strings.TrimSuffix(baseName, ".config.json")
 }
 
-func (w *workspaceConfig) current() string {
-	current := filepath.Join(w.root(), "current")
+func currentWorkspaceName() string {
+	current := filepath.Join(workspaceRoot(), "current")
 	_, err := os.Lstat(current)
 	if os.IsNotExist(err) {
 		return ""
@@ -158,7 +158,7 @@ func (w *workspaceConfig) delete(workspace string) error {
 	if workspace == "default" {
 		return fmt.Errorf("cannot remove default")
 	}
-	if workspace == w.current() {
+	if workspace == currentWorkspaceName() {
 		_ = w.setDefault("default")
 	}
 	return os.Remove(w.configFile(workspace))
@@ -193,27 +193,10 @@ func loadWorkspaceConfig(workspace string) (*workspaceConfig, error) {
 	return newTarget, nil
 }
 
-func (w *workspaceConfig) load(workspace string) error {
-	w.Lock()
-	defer w.Unlock()
-	newTarget := &workspaceConfig{}
-	newTarget.Name = workspace
-	data, err := ioutil.ReadFile(newTarget.configFile())
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(data, w)
-	if err != nil {
-		return err
-	}
-	w.Name = workspace
-	return nil
-}
-
 func (w *workspaceConfig) setDefault(workspace string) error {
 	w.Lock()
 	defer w.Unlock()
-	current := filepath.Join(w.root(), "current")
+	current := filepath.Join(workspaceRoot(), "current")
 	if _, err := os.Lstat(current); err == nil {
 		if err := os.Remove(current); err != nil {
 			return err
@@ -233,9 +216,9 @@ func (w *workspaceConfig) setDefault(workspace string) error {
 	return nil
 }
 
-func (w *workspaceConfig) ensureRoot() {
+func ensureRoot() {
 	// Check if we have a default namespace
-	defaultWorkspaceConfigFile := filepath.Join(w.root(), "default.config.json")
+	defaultWorkspaceConfigFile := filepath.Join(workspaceRoot(), "default.config.json")
 	stat, err := os.Stat(defaultWorkspaceConfigFile)
 	if os.IsNotExist(err) {
 		// Create
@@ -257,11 +240,9 @@ func (w *workspaceConfig) ensureRoot() {
 	}
 }
 
-func (w *workspaceConfig) ensureDefault() {
-	w.Lock()
-	defer w.Unlock()
+func ensureDefault() {
 	// Check if we have a current workspace
-	currentWorkspaceFile := filepath.Join(w.root(), "current")
+	currentWorkspaceFile := filepath.Join(workspaceRoot(), "current")
 	_, err := os.Stat(currentWorkspaceFile)
 	if os.IsNotExist(err) {
 		if runtime.GOOS != "windows" {
@@ -272,18 +253,12 @@ func (w *workspaceConfig) ensureDefault() {
 			}
 		} else {
 			// Windows
-			if err := ioutil.WriteFile(currentWorkspaceFile, []byte(w.configFile()), 0600); err != nil {
+			if err := ioutil.WriteFile(currentWorkspaceFile, []byte("default.config.json"), 0600); err != nil {
 				fmt.Printf("Failed to set default workspace: %v\n", err)
 				os.Exit(1)
 			}
 		}
 	}
-}
-
-func (w *workspaceConfig) init() error {
-	w.ensureRoot()
-	w.ensureDefault()
-	return w.load(w.current())
 }
 
 func init() {

@@ -70,7 +70,9 @@ var hasResourcesDeleteCmd = &cobra.Command{
 			return
 		}
 		if res != nil {
-			fmt.Printf("resource deleted: %s\n", resourceID)
+			for _, r := range res.Results {
+				fmt.Printf("Resource: %s, Message: %s\n", r.ResourceID, r.ResultMessage)
+			}
 			return
 		}
 		fmt.Printf("unexpected error deleting resource: %v\n", resp)

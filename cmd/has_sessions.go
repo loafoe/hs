@@ -28,7 +28,7 @@ import (
 // hasSessionsCmd represents the sessions command
 var hasSessionsCmd = &cobra.Command{
 	Use:     "sessions",
-	Aliases: []string{"s"},
+	Aliases: []string{"s", "session"},
 	Short:   "Manage HAS sessions",
 	Long:    `Manages HAS saessions.`,
 	Run: func(cmd *cobra.Command, args []string) {

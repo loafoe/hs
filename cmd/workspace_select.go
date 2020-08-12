@@ -45,7 +45,12 @@ var workspaceSelectCmd = &cobra.Command{
 		}
 		fmt.Printf("switched to workspace %s\n", workspace)
 		fmt.Printf("\n")
-		_ = currentWorkspace.load(workspace)
+		var err error
+		currentWorkspace, err = loadWorkspaceConfig(workspace)
+		if err != nil {
+			fmt.Printf("failed to load workspace: %v\n", err)
+			return
+		}
 		workspaceInfoCmd.Run(cmd, args)
 	},
 }

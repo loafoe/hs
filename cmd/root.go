@@ -73,8 +73,16 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	currentWorkspace = new(workspaceConfig)
+	ensureRoot()
+	ensureDefault()
+	var err error
 
+	currentWorkspace, err = loadWorkspaceConfig(currentWorkspaceName())
+
+	if err != nil {
+		fmt.Printf("failed to load workspace: %s\n", currentWorkspaceName())
+		os.Exit(1)
+	}
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -82,10 +90,6 @@ func initConfig() {
 		// Search config in home directory with name ".hs" (without extension).
 		viper.SetConfigName(".hs")
 
-	}
-	if err := currentWorkspace.init(); err != nil {
-		fmt.Printf("failed to initialize workspace: %v\n", err)
-		os.Exit(1)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

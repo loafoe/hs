@@ -40,6 +40,7 @@ var hasSessionsCreateCmd = &cobra.Command{
 	Short:   "Create a HAS session",
 	Long:    `Creates a HAS session.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		devSession, _ := cmd.Flags().GetBool("dev")
 		client, err := getHASClient(cmd, args)
 		if err != nil {
 			fmt.Printf("error initializing HAS client: %v\n", err)
@@ -79,11 +80,15 @@ var hasSessionsCreateCmd = &cobra.Command{
 			return
 		}
 		imageID := hasImages[i].ID
-		sessions, _, err := client.Sessions.CreateSession(currentWorkspace.IAMUserUUID, has.Session{
+		session := has.Session{
 			ImageID:    imageID,
 			Region:     r,
 			ClusterTag: "created-with-hs",
-		})
+		}
+		if devSession {
+			session.SessionType = "DEV"
+		}
+		sessions, _, err := client.Sessions.CreateSession(currentWorkspace.IAMUserUUID, session)
 		if err != nil {
 			fmt.Printf("failed to create session: %v\n", err)
 			return
@@ -95,11 +100,14 @@ var hasSessionsCreateCmd = &cobra.Command{
 				// Open in browser
 				_ = browser.OpenURL(session.SessionURL)
 			}
+			if session.AccessToken != "" {
+				fmt.Printf("UserID: %s\nAccessToken: %s\n", session.UserID, session.AccessToken)
+			}
 		}
 	},
 }
 
 func init() {
 	hasSessionsCmd.AddCommand(hasSessionsCreateCmd)
-
+	hasSessionsCreateCmd.Flags().BoolP("dev", "d", false, "Start a dev session")
 }
