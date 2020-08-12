@@ -27,9 +27,10 @@ import (
 
 // iamUsersCmd represents the users command
 var iamUsersCmd = &cobra.Command{
-	Use:   "users",
-	Short: "Manage IAM users",
-	Long:  `Manages IAM users in your organization.`,
+	Use:     "users",
+	Aliases: []string{"u"},
+	Short:   "Manage IAM users",
+	Long:    `Manages IAM users in your organization.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

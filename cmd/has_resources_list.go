@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/cheynewallace/tabby"
@@ -50,6 +51,11 @@ var hasResourcesListCmd = &cobra.Command{
 		resources, _, err := client.Resources.GetResources(&has.ResourceOptions{})
 		if err != nil {
 			fmt.Printf("error retrieving resources list: %v\n", err)
+			return
+		}
+		if jsonOut {
+			data, _ := json.Marshal(resources)
+			fmt.Printf("%s\n", data)
 			return
 		}
 		t := tabby.New()

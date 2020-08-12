@@ -58,6 +58,7 @@ var iamOrgsListCmd = &cobra.Command{
 				org.OrganizationID)
 		}
 		t.Print()
+		_ = currentWorkspace.saveWithIAM(iamClient)
 	},
 }
 

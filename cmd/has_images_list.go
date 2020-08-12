@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -45,6 +46,11 @@ var hasImageListCmd = &cobra.Command{
 		images, _, err := client.Images.GetImages()
 		if err != nil {
 			fmt.Printf("error retrieving image list: %v\n", err)
+			return
+		}
+		if jsonOut {
+			data, _ := json.Marshal(images)
+			fmt.Printf("%s\n", data)
 			return
 		}
 		t := tabby.New()

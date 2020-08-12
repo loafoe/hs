@@ -32,6 +32,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/philips-software/go-hsdp-api/iam"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/philips-software/go-hsdp-api/has"
 	"github.com/philips-software/go-hsdp-api/iron"
@@ -166,6 +168,12 @@ func (w *workspaceConfig) delete(workspace string) error {
 	return os.Remove(w.configFile(workspace))
 }
 
+func (w *workspaceConfig) saveWithIAM(client *iam.Client) error {
+	w.IAMAccessToken = client.Token()
+	w.IAMRefreshToken = client.RefreshToken()
+	w.IAMAccessTokenExpires = client.Expires()
+	return w.save()
+}
 func (w *workspaceConfig) save() error {
 	w.Lock()
 	defer w.Unlock()

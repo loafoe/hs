@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -53,7 +54,9 @@ to quickly create a Cobra application.`,
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
-		fmt.Printf("retrieving codes...\n\n")
+		if !jsonOut {
+			fmt.Printf("retrieving codes...\n\n")
+		}
 		codes, _, err := client.Codes.GetCodes()
 		if err != nil {
 			fmt.Printf("error getting codes: %v\n", err)
@@ -61,6 +64,11 @@ to quickly create a Cobra application.`,
 		}
 		if codes == nil {
 			fmt.Printf("no codes found.\n")
+			return
+		}
+		if jsonOut {
+			data, _ := json.Marshal(codes)
+			fmt.Printf("%s\n", data)
 			return
 		}
 		t := tabby.New()

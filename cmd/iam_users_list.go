@@ -32,9 +32,10 @@ import (
 
 // iamUsersListCmd represents the list command
 var iamUsersListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List users",
-	Long:  `Lists users in the selected organization.`,
+	Use:     "list",
+	Aliases: []string{"l", "ls"},
+	Short:   "List users",
+	Long:    `Lists users in the selected organization.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		iamClient, err := getIAMClient(cmd)
 		if err != nil {
@@ -108,6 +109,7 @@ var iamUsersListCmd = &cobra.Command{
 		for i := 0; i < numWorkers; i++ {
 			done <- true
 		}
+		_ = currentWorkspace.saveWithIAM(iamClient)
 	},
 }
 

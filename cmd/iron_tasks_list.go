@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -47,14 +48,25 @@ var ironTasksListCmd = &cobra.Command{
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
-		fmt.Printf("retrieving tasks and schedules...\n\n")
+		if !jsonOut {
+			fmt.Printf("retrieving tasks and schedules...\n\n")
+		}
 		tasks, _, err := client.Tasks.GetTasks()
 		if err != nil {
 			fmt.Printf("error getting tasks: %v\n", err)
 			return
 		}
 		if tasks == nil {
+			if jsonOut {
+				fmt.Printf("[]\n")
+				return
+			}
 			fmt.Printf("no tasks found.\n")
+			return
+		}
+		if jsonOut {
+			data, _ := json.Marshal(tasks)
+			fmt.Printf("%s\n", data)
 			return
 		}
 		t := tabby.New()

@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/cheynewallace/tabby"
@@ -47,7 +48,16 @@ var hasSessionsListCmd = &cobra.Command{
 			return
 		}
 		if sessions == nil || len(sessions.Sessions) == 0 {
+			if jsonOut {
+				fmt.Printf("[]\n")
+				return
+			}
 			fmt.Printf("no sessions found\n")
+			return
+		}
+		if jsonOut {
+			data, _ := json.Marshal(sessions)
+			fmt.Printf("%s\n", data)
 			return
 		}
 		t := tabby.New()

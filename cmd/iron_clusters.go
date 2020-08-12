@@ -22,7 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+
 	"github.com/cheynewallace/tabby"
 	"github.com/philips-software/go-hsdp-api/iron"
 
@@ -31,10 +33,10 @@ import (
 
 // clustersCmd represents the clusters command
 var clustersCmd = &cobra.Command{
-	Use:   "clusters",
+	Use:     "clusters",
 	Aliases: []string{"cl"},
-	Short: "List available clusters",
-	Long: `Lists the available Iron clusters.`,
+	Short:   "List available clusters",
+	Long:    `Lists the available Iron clusters.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config, err := readIronConfig()
 		if err != nil {
@@ -46,7 +48,9 @@ var clustersCmd = &cobra.Command{
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
-		fmt.Printf("retrieving clusters...\n\n")
+		if !jsonOut {
+			fmt.Printf("retrieving clusters...\n\n")
+		}
 		clusters, _, err := client.Clusters.GetClusters()
 		if err != nil {
 			fmt.Printf("error retrieving clusters: %v\n", err)
@@ -55,6 +59,11 @@ var clustersCmd = &cobra.Command{
 		cl, _, _ := client.Clusters.GetCluster(config.ClusterInfo[0].ClusterID)
 		if cl != nil {
 			*clusters = append(*clusters, *cl)
+		}
+		if jsonOut {
+			data, _ := json.Marshal(clusters)
+			fmt.Printf("%s\n", string(data))
+			return
 		}
 		t := tabby.New()
 		t.AddHeader("cluster id", "name", "available", "total", "cpu", "memory", "disk")
