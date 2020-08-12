@@ -33,9 +33,9 @@ var workspaceInfoCmd = &cobra.Command{
 	Short: "Information on current workspace",
 	Long:  `Shows detailed information on current workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Workspace name:       %s\n", currentWorkspace.Name)
-		fmt.Printf("Default region:       %s\n", currentWorkspace.DefaultRegion)
-		fmt.Printf("Default environment:  %s\n", currentWorkspace.DefaultEnvironment)
+		fmt.Printf("Workspace name:            %s\n", currentWorkspace.Name)
+		fmt.Printf("Default region:            %s\n", currentWorkspace.DefaultRegion)
+		fmt.Printf("Default environment:       %s\n", currentWorkspace.DefaultEnvironment)
 		loginStatus := "never logged in"
 		if expired := currentWorkspace.iamExpireTime(); expired != nil {
 			if currentWorkspace.iamLoginExpired() {
@@ -47,9 +47,10 @@ var workspaceInfoCmd = &cobra.Command{
 				loginStatus = fmt.Sprintf("active (expires at %v)", expired)
 			}
 		}
-		fmt.Printf("IAM Login status:     %s\n", loginStatus)
-		fmt.Printf("IAM Region:           %s\n", currentWorkspace.IAMRegion)
-		fmt.Printf("IAM Environment:      %s\n", currentWorkspace.IAMEnvironment)
+		fmt.Printf("IAM Login status:          %s\n", loginStatus)
+		fmt.Printf("IAM Region:                %s\n", currentWorkspace.IAMRegion)
+		fmt.Printf("IAM Environment:           %s\n", currentWorkspace.IAMEnvironment)
+		fmt.Printf("IAM Selected Organization: %s\n", currentWorkspace.IAMSelectedOrg)
 		if currentWorkspace.HASConfig.HASURL != "" {
 			fmt.Printf("HAS Region:           %s\n", currentWorkspace.HASRegion)
 			fmt.Printf("HAS URL:              %s\n", currentWorkspace.HASConfig.HASURL)
