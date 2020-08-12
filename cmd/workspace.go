@@ -68,6 +68,7 @@ type workspaceConfig struct {
 	IAMRegion             string      `json:"IAMRegion"`
 	IAMEnvironment        string      `json:"IAMEnvironment"`
 	IAMSelectedOrg        string      `json:"IAMSelectedOrg"`
+	IAMSelectedOrgName    string      `json:"IAMSelectedOrgName"`
 	HASRegion             string      `json:"HASRegion"`
 	HASConfig             has.Config  `json:"HASConfig"`
 	IronConfig            iron.Config `json:"IronConfig"`

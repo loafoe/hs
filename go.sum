@@ -182,6 +182,7 @@ github.com/pelletier/go-toml v1.2.0 h1:T5zMGML61Wp+FlcbWjRDT7yAxhJNAiPPLOFECq181
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/pelletier/go-toml v1.8.0 h1:Keo9qb7iRJs2voHvunFtuuYFsbWeOBh8/P9v/kVMFtw=
 github.com/pelletier/go-toml v1.8.0/go.mod h1:D6yutnOGMveHEPV7VQOuvI/gXY61bv+9bAOTRnLElKs=
+github.com/philips-software/go-hsdp-api v0.20.0 h1:jLhoS4Yx4ohHwjI6bcVESX0tLgsdZc//8UuETgyIx/c=
 github.com/philips-software/go-hsdp-api v0.20.1-0.20200728105414-fddff595c744 h1:63pCcfNBPsc8ZieMRUMMo33U+wdyqIwZybNEKREfDyY=
 github.com/philips-software/go-hsdp-api v0.20.1-0.20200728105414-fddff595c744/go.mod h1:agJtsgjb1W4xq5cVUdk06uUVETKO1nKZAZJ4Y1Dumg4=
 github.com/philips-software/go-hsdp-api v0.20.1-0.20200728111618-acde39c32bbd h1:YvVmnnGkj5UG9ERhjyOVss7s/d6p+p/4MCpopH8RHqw=

@@ -32,6 +32,7 @@ import (
 
 var cfgFile string
 var debug bool
+var jsonOut bool
 var clientID string
 var clientSecret string
 var currentWorkspace *workspaceConfig
@@ -65,6 +66,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.hs.yaml)")
 	rootCmd.PersistentFlags().BoolVar(&debug, "debug", false, "enable debugging")
+	rootCmd.PersistentFlags().BoolVar(&jsonOut, "json", false, "enable JSON output")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

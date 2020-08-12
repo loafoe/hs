@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/cheynewallace/tabby"
@@ -43,6 +44,11 @@ var iamOrgsListCmd = &cobra.Command{
 		introspect, _, err := iamClient.Introspect()
 		if err != nil {
 			fmt.Printf("error performing IAM introspect: %v\n", err)
+			return
+		}
+		if jsonOut {
+			data, _ := json.Marshal(introspect.Organizations.OrganizationList)
+			fmt.Printf("%s\n", string(data))
 			return
 		}
 		t := tabby.New()

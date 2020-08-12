@@ -13,3 +13,5 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
 )
+
+replace github.com/philips-software/go-hsdp-api v0.20.1-0.20200805132929-0222897eed1c => /Users/andy/DEV/Go/go-hsdp-api

@@ -80,6 +80,7 @@ var iamOrgsSelectCmd = &cobra.Command{
 			return
 		}
 		currentWorkspace.IAMSelectedOrg = orgs[i].ID
+		currentWorkspace.IAMSelectedOrgName = orgs[i].Name
 		_ = currentWorkspace.save()
 	},
 }
