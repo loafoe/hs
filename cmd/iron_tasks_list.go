@@ -88,6 +88,8 @@ var ironTasksListCmd = &cobra.Command{
 				entry = existing
 			}
 			switch task.Status {
+			case "running":
+				entry.Running++
 			case "preparing":
 				entry.Preparing++
 			case "timeout":
