@@ -22,52 +22,47 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 
-	"github.com/philips-software/go-hsdp-api/iron"
+	"github.com/philips-software/go-hsdp-api/credentials"
 	"github.com/spf13/cobra"
 )
 
-// ironCmd represents the iron command
-var ironCmd = &cobra.Command{
-	Use:   "iron",
-	Short: "Interaction with HSPD IronIO",
-	Long:  `This is a replacement of the iron CLI with a focus on dockerized tasks.`,
+// s3credsCmd represents the s3creds command
+var s3credsCmd = &cobra.Command{
+	Use:     "s3creds",
+	Aliases: []string{"s3c", "s3cr"},
+	Short:   "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
+
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(ironCmd)
-	ironCmd.PersistentFlags().StringP("cluster", "c", "", "Cluster to use")
+	rootCmd.AddCommand(s3credsCmd)
 }
 
-func readIronConfig(path ...string) (*iron.Config, error) {
-	var configFile string
-	if len(path) == 0 {
-		home, _ := os.UserHomeDir()
-		configFile = filepath.Join(home, ".iron.json")
-	} else {
-		configFile = path[0]
-	}
-	data, err := ioutil.ReadFile(configFile)
+func getCredentialsClient(cmd *cobra.Command, args []string) (*credentials.Client, error) {
+	productKey := currentWorkspace.S3CredsProductKey
+	region := currentWorkspace.DefaultRegion
+	environment := currentWorkspace.DefaultEnvironment
+	iamClient, err := getIAMClient(cmd)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("iam client: %w", err)
 	}
-	var config iron.Config
-	err = json.Unmarshal(data, &config)
-	if err != nil {
-		return nil, err
+	if productKey == "" {
+		return nil, fmt.Errorf("no S3 Credentials productKey configured")
 	}
-	if config.ProjectID == "" {
-		return nil, fmt.Errorf("invalid config: %v", config)
-	}
-	config.Debug = true
-	config.DebugLog = "/tmp/hs_iron.log"
-	return &config, nil
+	return credentials.NewClient(iamClient, &credentials.Config{
+		Region:      region,
+		Environment: environment,
+		Debug:       true,
+		DebugLog:    "/tmp/hs_credentials.log",
+	})
 }

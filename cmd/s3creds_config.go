@@ -22,52 +22,43 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 
-	"github.com/philips-software/go-hsdp-api/iron"
 	"github.com/spf13/cobra"
 )
 
-// ironCmd represents the iron command
-var ironCmd = &cobra.Command{
-	Use:   "iron",
-	Short: "Interaction with HSPD IronIO",
-	Long:  `This is a replacement of the iron CLI with a focus on dockerized tasks.`,
+// s3credsConfigCmd represents the config command
+var s3credsConfigCmd = &cobra.Command{
+	Use:     "config",
+	Aliases: []string{"c"},
+	Short:   "Configure S3 Credentials setup",
+	Long:    `Configure the S3 Credentials setup.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		_ = cmd.Help()
+		productKey, _ := cmd.Flags().GetString("product-key")
+
+		if productKey == "" {
+			_ = cmd.Help()
+			return
+		}
+		currentWorkspace.S3CredsProductKey = productKey
+		if err := currentWorkspace.save(); err == nil {
+			fmt.Printf("OK\n")
+		} else {
+			fmt.Printf("failed to store config: %v\n", err)
+		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(ironCmd)
-	ironCmd.PersistentFlags().StringP("cluster", "c", "", "Cluster to use")
-}
+	s3credsCmd.AddCommand(s3credsConfigCmd)
 
-func readIronConfig(path ...string) (*iron.Config, error) {
-	var configFile string
-	if len(path) == 0 {
-		home, _ := os.UserHomeDir()
-		configFile = filepath.Join(home, ".iron.json")
-	} else {
-		configFile = path[0]
-	}
-	data, err := ioutil.ReadFile(configFile)
-	if err != nil {
-		return nil, err
-	}
-	var config iron.Config
-	err = json.Unmarshal(data, &config)
-	if err != nil {
-		return nil, err
-	}
-	if config.ProjectID == "" {
-		return nil, fmt.Errorf("invalid config: %v", config)
-	}
-	config.Debug = true
-	config.DebugLog = "/tmp/hs_iron.log"
-	return &config, nil
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// s3credsConfigCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	s3credsConfigCmd.Flags().StringP("product-key", "k", "", "The S3Creds product key to use")
 }

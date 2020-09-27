@@ -24,50 +24,45 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 
-	"github.com/philips-software/go-hsdp-api/iron"
+	"github.com/philips-software/go-hsdp-api/credentials"
+
 	"github.com/spf13/cobra"
 )
 
-// ironCmd represents the iron command
-var ironCmd = &cobra.Command{
-	Use:   "iron",
-	Short: "Interaction with HSPD IronIO",
-	Long:  `This is a replacement of the iron CLI with a focus on dockerized tasks.`,
+// getCmd represents the get command
+var getCmd = &cobra.Command{
+	Use:     "get",
+	Aliases: []string{"g"},
+	Short:   "Get S3 Credentials",
+	Long:    `Gets S3 Credentials for the given configuration.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		_ = cmd.Help()
+		client, err := getCredentialsClient(cmd, args)
+		if err != nil {
+			fmt.Printf("error initializing S3 Credentials client: %v\n", err)
+			return
+		}
+		access, _, err := client.Access.GetAccess(&credentials.GetAccessOptions{
+			ProductKey: &currentWorkspace.S3CredsProductKey,
+		})
+		if err != nil {
+			fmt.Printf("Error retrieving credentials: %v\n", err)
+		}
+		data, _ := json.Marshal(access)
+		fmt.Println(pretty(data))
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(ironCmd)
-	ironCmd.PersistentFlags().StringP("cluster", "c", "", "Cluster to use")
-}
+	s3credsCmd.AddCommand(getCmd)
 
-func readIronConfig(path ...string) (*iron.Config, error) {
-	var configFile string
-	if len(path) == 0 {
-		home, _ := os.UserHomeDir()
-		configFile = filepath.Join(home, ".iron.json")
-	} else {
-		configFile = path[0]
-	}
-	data, err := ioutil.ReadFile(configFile)
-	if err != nil {
-		return nil, err
-	}
-	var config iron.Config
-	err = json.Unmarshal(data, &config)
-	if err != nil {
-		return nil, err
-	}
-	if config.ProjectID == "" {
-		return nil, fmt.Errorf("invalid config: %v", config)
-	}
-	config.Debug = true
-	config.DebugLog = "/tmp/hs_iron.log"
-	return &config, nil
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// getCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// getCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
