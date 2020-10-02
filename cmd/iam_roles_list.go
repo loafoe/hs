@@ -61,10 +61,11 @@ var iamRolesListCmd = &cobra.Command{
 			return
 		}
 		t := tabby.New()
-		t.AddHeader("role", "id")
+		t.AddHeader("role", "id", "description")
 		for _, role := range *roles {
 			t.AddLine(role.Name,
-				role.ID)
+				role.ID,
+				role.Description)
 		}
 		t.Print()
 		_ = currentWorkspace.saveWithIAM(iamClient)
