@@ -75,7 +75,10 @@ type workspaceConfig struct {
 	HASConfig             has.Config  `json:"HASConfig"`
 	IronConfig            iron.Config `json:"IronConfig"`
 	S3CredsProductKey     string      `json:"S3CredsProductKey"`
-	UAAToken              string      `json:"UAAToken"`
+	UAAToken              string      `json:"UAAAccessToken"`
+	UAARefreshToken       string      `json:"UAARefreshToken"`
+	UAAAccessTokenExpires int64       `json:"UAAAccessTokenExpires"`
+	UAAIDToken            string      `json:"UAAIDToken"`
 	PKILogicalPath        string      `json:"PKILogicalPath"`
 }
 
@@ -87,8 +90,24 @@ func (w *workspaceConfig) iamExpireTime() *time.Time {
 	return &tm
 }
 
+func (w *workspaceConfig) uaaExpireTime() *time.Time {
+	if w.UAAAccessTokenExpires == 0 {
+		return nil
+	}
+	tm := time.Unix(w.UAAAccessTokenExpires, 0)
+	return &tm
+}
+
 func (w *workspaceConfig) iamLoginExpired() bool {
 	expired := w.iamExpireTime()
+	if expired == nil {
+		return true
+	}
+	return expired.Before(time.Now())
+}
+
+func (w *workspaceConfig) uaaLoginExpired() bool {
+	expired := w.uaaExpireTime()
 	if expired == nil {
 		return true
 	}

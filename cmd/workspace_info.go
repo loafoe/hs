@@ -47,7 +47,7 @@ var workspaceInfoCmd = &cobra.Command{
 				loginStatus = fmt.Sprintf("active (expires at %v)", expired)
 			}
 		}
-		fmt.Printf("IAM Login status:          %s\n", loginStatus)
+		fmt.Printf("\nIAM Login status:          %s\n", loginStatus)
 		fmt.Printf("IAM Region:                %s\n", currentWorkspace.IAMRegion)
 		fmt.Printf("IAM Environment:           %s\n", currentWorkspace.IAMEnvironment)
 		fmt.Printf("IAM Selected Organization: %s (%s)\n",
@@ -57,6 +57,22 @@ var workspaceInfoCmd = &cobra.Command{
 			fmt.Printf("HAS Region:                %s\n", currentWorkspace.HASRegion)
 			fmt.Printf("HAS URL:                   %s\n", currentWorkspace.HASConfig.HASURL)
 
+		}
+		if currentWorkspace.UAAIDToken != "" {
+			loginStatus := "never logged in"
+			if expired := currentWorkspace.uaaExpireTime(); expired != nil {
+				if currentWorkspace.uaaLoginExpired() {
+					loginStatus = fmt.Sprintf("refresh required (expired at %v)", expired)
+					if currentWorkspace.UAARefreshToken == "" {
+						loginStatus = "login required"
+					}
+				} else {
+					loginStatus = fmt.Sprintf("active (expires at %v)", expired)
+				}
+			}
+			fmt.Printf("\nUAA Login status:          %s\n", loginStatus)
+			fmt.Printf("UAA Region:                %s\n", currentWorkspace.IAMRegion)
+			fmt.Printf("UAA Environment:           %s\n", currentWorkspace.IAMEnvironment)
 		}
 		fmt.Printf("\n")
 	},

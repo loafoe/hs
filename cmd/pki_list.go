@@ -63,7 +63,8 @@ var pkiListCmd = &cobra.Command{
 			fmt.Printf("error initializing CONSOLE client: %v\n", err)
 			os.Exit(1)
 		}
-		consoleClient.SetToken(currentWorkspace.UAAToken)
+		consoleClient.SetTokens(currentWorkspace.UAAToken,
+			currentWorkspace.UAARefreshToken, currentWorkspace.UAAIDToken, currentWorkspace.UAAAccessTokenExpires)
 		iamClient, err := getIAMClient(cmd)
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)
@@ -88,6 +89,7 @@ var pkiListCmd = &cobra.Command{
 			fmt.Printf("error marshalling Tenant result: %v\n", err)
 			return
 		}
+		persistUAACredentials(consoleClient)
 		fmt.Println(pretty(data))
 	},
 }

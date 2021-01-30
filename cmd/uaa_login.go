@@ -70,10 +70,17 @@ var uaaLoginCmd = &cobra.Command{
 			fmt.Printf("error logging in: %v\n", err)
 			os.Exit(1)
 		}
-		currentWorkspace.UAAToken = consoleClient.Token()
-		_ = currentWorkspace.save()
+		persistUAACredentials(consoleClient)
 		fmt.Printf("%s\n", consoleClient.Token())
 	},
+}
+
+func persistUAACredentials(consoleClient *console.Client) {
+	currentWorkspace.UAAToken = consoleClient.Token()
+	currentWorkspace.UAARefreshToken = consoleClient.RefreshToken()
+	currentWorkspace.UAAIDToken = consoleClient.IDToken()
+	currentWorkspace.UAAAccessTokenExpires = consoleClient.Expires()
+	_ = currentWorkspace.save()
 }
 
 func credentials(username string, password string) (string, string, error) {
