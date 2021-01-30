@@ -94,7 +94,7 @@ func contains(a []string, b string) bool {
 	return false
 }
 
-func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
+func getHASClient(cmd *cobra.Command, _ []string) (*has.Client, error) {
 	url, _ := cmd.Flags().GetString("url")
 	orgID, _ := cmd.Flags().GetString("orgid")
 	region, _ := cmd.Flags().GetString("region")
@@ -116,9 +116,9 @@ func getHASClient(cmd *cobra.Command, args []string) (*has.Client, error) {
 			if region != "" {
 				c = c.Region(region)
 			}
-			url, err = c.Service("has").GetString("url")
-			if err != nil {
-				return nil, fmt.Errorf("service: %w", err)
+			url = c.Service("has").URL
+			if url == "" {
+				return nil, fmt.Errorf("service has not found in region %s", region)
 			}
 			currentWorkspace.HASConfig.HASURL = url
 		}

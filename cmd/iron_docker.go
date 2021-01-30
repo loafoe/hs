@@ -29,7 +29,7 @@ import (
 var dockerCmd = &cobra.Command{
 	Use:   "docker login",
 	Short: "Regiser docker credentials with Iron",
-	Long: `Register docker credentials with Iron`,
+	Long:  `Register docker credentials with Iron`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

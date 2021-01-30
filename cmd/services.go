@@ -61,8 +61,8 @@ var servicesCmd = &cobra.Command{
 		t := tabby.New()
 		t.AddHeader("service", "host", "url")
 		for _, i := range services {
-			host, _ := config.Service(i).GetString("host")
-			url, _ := config.Service(i).GetString("url")
+			host := config.Service(i).Host
+			url := config.Service(i).URL
 			t.AddLine(i,
 				host,
 				url)

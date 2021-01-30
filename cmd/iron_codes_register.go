@@ -30,10 +30,10 @@ import (
 
 // ironRegisterCmd represents the register command
 var ironRegisterCmd = &cobra.Command{
-	Use:   "register some/image[:tag]",
+	Use:     "register some/image[:tag]",
 	Aliases: []string{"r"},
-	Short: "Register a docker image as an Iron code",
-	Long: `Registers a docker image as an Iron code`,
+	Short:   "Register a docker image as an Iron code",
+	Long:    `Registers a docker image as an Iron code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
@@ -55,7 +55,7 @@ var ironRegisterCmd = &cobra.Command{
 		}
 		name := strings.Split(args[0], ":")[0]
 		code, resp, err := client.Codes.CreateOrUpdateCode(iron.Code{
-			Name: name,
+			Name:  name,
 			Image: args[0],
 		})
 		if err != nil {

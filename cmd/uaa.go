@@ -25,17 +25,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// codesCmd represents the codes command
-var codesCmd = &cobra.Command{
-	Use:     "codes",
-	Aliases: []string{"c", "co"},
-	Short:   "Manage registration of codes with Iron",
-	Long:    `Manage registration of codes with Iron`,
+// uaaCmd represents the uaa command
+var uaaCmd = &cobra.Command{
+	Use:   "uaa",
+	Short: "UAA related services",
+	Long:  `UAA related services.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
 }
 
 func init() {
-	ironCmd.AddCommand(codesCmd)
+	rootCmd.AddCommand(uaaCmd)
 }

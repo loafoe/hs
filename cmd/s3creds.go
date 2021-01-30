@@ -24,7 +24,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/philips-software/go-hsdp-api/credentials"
+	"github.com/philips-software/go-hsdp-api/s3creds"
 	"github.com/spf13/cobra"
 )
 
@@ -48,7 +48,7 @@ func init() {
 	rootCmd.AddCommand(s3credsCmd)
 }
 
-func getCredentialsClient(cmd *cobra.Command, args []string) (*credentials.Client, error) {
+func getCredentialsClient(cmd *cobra.Command, _ []string) (*s3creds.Client, error) {
 	productKey := currentWorkspace.S3CredsProductKey
 	region := currentWorkspace.DefaultRegion
 	environment := currentWorkspace.DefaultEnvironment
@@ -59,7 +59,7 @@ func getCredentialsClient(cmd *cobra.Command, args []string) (*credentials.Clien
 	if productKey == "" {
 		return nil, fmt.Errorf("no S3 Credentials productKey configured")
 	}
-	return credentials.NewClient(iamClient, &credentials.Config{
+	return s3creds.NewClient(iamClient, &s3creds.Config{
 		Region:      region,
 		Environment: environment,
 		Debug:       true,

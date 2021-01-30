@@ -22,20 +22,22 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
-// codesCmd represents the codes command
-var codesCmd = &cobra.Command{
-	Use:     "codes",
-	Aliases: []string{"c", "co"},
-	Short:   "Manage registration of codes with Iron",
-	Long:    `Manage registration of codes with Iron`,
+// iamOrgsCreateCmd represents the create command
+var iamOrgsCreateCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create an IAM sub ORG",
+	Long:  `Creates an IAM sub organization.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		_ = cmd.Help()
+		fmt.Println("create called")
 	},
 }
 
 func init() {
-	ironCmd.AddCommand(codesCmd)
+	iamOrgsCmd.AddCommand(iamOrgsCreateCmd)
+
 }

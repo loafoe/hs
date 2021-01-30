@@ -22,47 +22,61 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
+	"net/http"
 
-	"github.com/philips-software/go-hsdp-api/s3creds"
+	"github.com/philips-software/go-hsdp-api/iam"
 
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
-var getCmd = &cobra.Command{
-	Use:     "get",
-	Aliases: []string{"g"},
-	Short:   "Get S3 Credentials",
-	Long:    `Gets S3 Credentials for the given configuration.`,
+// iamTokenCmd represents the token command
+var iamTokenCmd = &cobra.Command{
+	Use:   "token",
+	Short: "Returns the active token",
+	Long:  `Returns the active token, refreshing or initating a login if needed.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := getCredentialsClient(cmd, args)
-		if err != nil {
-			fmt.Printf("error initializing S3 Credentials client: %v\n", err)
-			return
-		}
-		access, _, err := client.Access.GetAccess(&s3creds.GetAccessOptions{
-			ProductKey: &currentWorkspace.S3CredsProductKey,
+		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
+			Region:         currentWorkspace.IAMRegion,
+			Environment:    currentWorkspace.IAMEnvironment,
+			OAuth2ClientID: clientID,
+			OAuth2Secret:   clientSecret,
+			Debug:          true,
+			DebugLog:       "/tmp/hs_iam_token.log",
 		})
 		if err != nil {
-			fmt.Printf("Error retrieving credentials: %v\n", err)
+			fmt.Printf("error initializing IAM client: %v\n", err)
+			return
 		}
-		data, _ := json.Marshal(access)
-		fmt.Println(pretty(data))
+		iamClient.SetTokens(currentWorkspace.IAMAccessToken,
+			currentWorkspace.IAMRefreshToken,
+			currentWorkspace.IAMIDToken,
+			currentWorkspace.IAMAccessTokenExpires)
+		introspect, _, err := iamClient.Introspect()
+		if err != nil {
+			fmt.Printf("error performing introspect: %v\n", err)
+			return
+		}
+		if introspect.Expires > currentWorkspace.IAMAccessTokenExpires {
+			currentWorkspace.IAMAccessToken = iamClient.Token()
+			currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
+			currentWorkspace.IAMAccessTokenExpires = iamClient.Expires()
+			_ = currentWorkspace.save()
+		}
+		fmt.Printf("%s\n", iamClient.Token())
 	},
 }
 
 func init() {
-	s3credsCmd.AddCommand(getCmd)
+	iamCmd.AddCommand(iamTokenCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// getCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// iamTokenCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// getCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// iamTokenCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

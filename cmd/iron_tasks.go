@@ -27,10 +27,10 @@ import (
 
 // ironTasksCmd represents the tasks command
 var ironTasksCmd = &cobra.Command{
-	Use:   "tasks",
+	Use:     "tasks",
 	Aliases: []string{"t"},
-	Short: "Manage tasks on Iron",
-	Long: `Manage tasks on Iron`,
+	Short:   "Manage tasks on Iron",
+	Long:    `Manage tasks on Iron`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

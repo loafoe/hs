@@ -27,7 +27,7 @@ import (
 	"strings"
 
 	"github.com/cheynewallace/tabby"
-	"github.com/philips-software/go-hsdp-api/credentials"
+	"github.com/philips-software/go-hsdp-api/s3creds"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +43,7 @@ var s3credsPoliciesListCmd = &cobra.Command{
 			fmt.Printf("error initializing S3 Credentials client: %v\n", err)
 			return
 		}
-		policies, _, err := client.Policy.GetPolicy(&credentials.GetPolicyOptions{
+		policies, _, err := client.Policy.GetPolicy(&s3creds.GetPolicyOptions{
 			ProductKey: &currentWorkspace.S3CredsProductKey,
 		})
 		if err != nil {

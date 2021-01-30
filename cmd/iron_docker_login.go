@@ -32,7 +32,7 @@ import (
 var dockerLoginCmd = &cobra.Command{
 	Use:   "login -u username -p password -e email -s server",
 	Short: "register docker credentials with Iron",
-	Long: `register docker credentials with Iron`,
+	Long:  `register docker credentials with Iron`,
 	Run: func(cmd *cobra.Command, args []string) {
 		config, err := readIronConfig()
 		if err != nil {
@@ -55,9 +55,9 @@ var dockerLoginCmd = &cobra.Command{
 		server, _ := cmd.Flags().GetString("server")
 
 		ok, _, err := client.Codes.DockerLogin(iron.DockerCredentials{
-			Username: username,
-			Password: password,
-			Email: email,
+			Username:      username,
+			Password:      password,
+			Email:         email,
 			ServerAddress: server,
 		})
 		if err != nil {

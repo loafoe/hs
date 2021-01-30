@@ -35,7 +35,7 @@ import (
 // ironCmd represents the iron command
 var ironCmd = &cobra.Command{
 	Use:   "iron",
-	Short: "Interaction with HSPD IronIO",
+	Short: "Interaction with HSDP IronIO",
 	Long:  `This is a replacement of the iron CLI with a focus on dockerized tasks.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
