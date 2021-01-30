@@ -75,6 +75,8 @@ type workspaceConfig struct {
 	HASConfig             has.Config  `json:"HASConfig"`
 	IronConfig            iron.Config `json:"IronConfig"`
 	S3CredsProductKey     string      `json:"S3CredsProductKey"`
+	UAAToken              string      `json:"UAAToken"`
+	PKILogicalPath        string      `json:"PKILogicalPath"`
 }
 
 func (w *workspaceConfig) iamExpireTime() *time.Time {

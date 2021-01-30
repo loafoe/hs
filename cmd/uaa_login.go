@@ -42,16 +42,23 @@ var uaaLoginCmd = &cobra.Command{
 	Long:  `Login to the regional UAA endpoint.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		region, _ := cmd.Flags().GetString("region")
+		environment, _ := cmd.Flags().GetString("environment")
+		if region == "" {
+			region = currentWorkspace.DefaultRegion
+		}
+		if environment == "" {
+			environment = currentWorkspace.DefaultEnvironment
+		}
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 		username, password, err := credentials(username, password)
+		fmt.Printf("\n")
 		if err != nil {
 			fmt.Printf("error logging in: %v\n", err)
 			os.Exit(1)
 		}
 		consoleClient, err := console.NewClient(http.DefaultClient, &console.Config{
 			Region:   region,
-			Debug:    true,
 			DebugLog: "/tmp/console.log",
 		})
 		if err != nil {
@@ -63,6 +70,8 @@ var uaaLoginCmd = &cobra.Command{
 			fmt.Printf("error logging in: %v\n", err)
 			os.Exit(1)
 		}
+		currentWorkspace.UAAToken = consoleClient.Token()
+		_ = currentWorkspace.save()
 		fmt.Printf("%s\n", consoleClient.Token())
 	},
 }
