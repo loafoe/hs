@@ -1,5 +1,5 @@
 /*
-Copyright © 2020 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
+Copyright © 2021 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,37 +22,20 @@ THE SOFTWARE.
 package cmd
 
 import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/philips-software/go-hsdp-api/s3creds"
-
 	"github.com/spf13/cobra"
 )
 
-// s3credsGetCmd represents the get command
-var s3credsGetCmd = &cobra.Command{
-	Use:     "get",
-	Aliases: []string{"g"},
-	Short:   "Get S3 Credentials",
-	Long:    `Gets S3 Credentials for the given configuration.`,
+// pkiCertsCmd represents the certs command
+var pkiCertsCmd = &cobra.Command{
+	Use:     "certs",
+	Aliases: []string{"c"},
+	Short:   "PKI certificate related commands",
+	Long:    `List and manage HSDP PKI certificates`,
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := getCredentialsClient(cmd, args)
-		if err != nil {
-			fmt.Printf("error initializing S3 Credentials client: %v\n", err)
-			return
-		}
-		access, _, err := client.Access.GetAccess(&s3creds.GetAccessOptions{
-			ProductKey: &currentWorkspace.S3CredsProductKey,
-		})
-		if err != nil {
-			fmt.Printf("Error retrieving credentials: %v\n", err)
-		}
-		data, _ := json.Marshal(access)
-		fmt.Println(pretty(data))
+		_ = cmd.Help()
 	},
 }
 
 func init() {
-	s3credsCmd.AddCommand(s3credsGetCmd)
+	pkiCmd.AddCommand(pkiCertsCmd)
 }
