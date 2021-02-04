@@ -68,6 +68,7 @@ var iamIntrospectCmd = &cobra.Command{
 			currentWorkspace.IAMAccessToken = iamClient.Token()
 			currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
 			currentWorkspace.IAMAccessTokenExpires = iamClient.Expires()
+			currentWorkspace.IAMIDToken = iamClient.IDToken()
 			_ = currentWorkspace.save()
 		}
 		fmt.Println(pretty(data))
