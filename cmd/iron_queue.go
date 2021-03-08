@@ -22,7 +22,9 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/philips-software/go-hsdp-api/iron"
 
@@ -39,17 +41,66 @@ var ironQueueCmd = &cobra.Command{
 		if len(args) == 0 {
 			_ = cmd.Help()
 		}
+		codeName := args[0]
+		if codeName == "" {
+			fmt.Printf("must specify code name as argument\n")
+			return
+		}
+		payloadFile, _ := cmd.Flags().GetString("payload")
+		payloadData, err := ioutil.ReadFile(payloadFile)
+		if err != nil {
+			fmt.Printf("error reading payload data: %v\n", err)
+			return
+		}
+
+		cluster, _ := cmd.Flags().GetString("cluster")
+
 		config, err := readIronConfig()
 		if err != nil {
 			fmt.Printf("error reading iron config: %v\n", err)
 			return
 		}
 		client, err := iron.NewClient(config)
+		defer client.Close()
 		if err != nil {
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
-		client.Close()
+		if cluster == "" {
+			if len(config.ClusterInfo) == 0 {
+				fmt.Printf("no default cluster, must specify cluster ID explicitly for this command\n")
+				return
+			}
+			cluster = config.ClusterInfo[0].ClusterID
+			fmt.Printf("using first cluster in list: %s\n", cluster)
+		}
+		taskData := string(payloadData)
+		if cluster != "" { // Encryption needed
+			key := ""
+			if key = config.ClusterInfo[0].Pubkey; key == "" {
+				fmt.Println("missing public key in configuration")
+				return
+			}
+			ciphertext, err := iron.EncryptPayload([]byte(key), payloadData)
+			if err != nil {
+				fmt.Printf("error encrypting payload: %v\n", err)
+				return
+			}
+			taskData = ciphertext
+		}
+
+		task := iron.Task{
+			Cluster: cluster,
+			CodeName: codeName,
+			Payload: taskData,
+		}
+		scheduledTask, _, err := client.Tasks.QueueTask(task)
+		if err != nil {
+			fmt.Printf("error queueing task: %v\n", err)
+			return
+		}
+		data, _ := json.Marshal(scheduledTask)
+		fmt.Printf("%s\n", pretty(data))
 	},
 }
 
