@@ -24,11 +24,12 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"golang.org/x/crypto/ssh/terminal"
 	"net/http"
 	"os"
 	"strings"
 	"syscall"
+
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/philips-software/go-hsdp-api/console"
 
@@ -71,13 +72,15 @@ var uaaLoginCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		persistUAACredentials(consoleClient)
-		fmt.Printf("%s\n", consoleClient.Token())
+		token, _ := consoleClient.Token()
+		fmt.Printf("%s\n", token)
 	},
 }
 
 func persistUAACredentials(consoleClient *console.Client) {
-	currentWorkspace.UAAToken = consoleClient.Token()
-	currentWorkspace.UAARefreshToken = consoleClient.RefreshToken()
+	token, _ := consoleClient.Token()
+	currentWorkspace.UAAToken = token.AccessToken
+	currentWorkspace.UAARefreshToken = token.RefreshToken
 	currentWorkspace.UAAIDToken = consoleClient.IDToken()
 	currentWorkspace.UAAAccessTokenExpires = consoleClient.Expires()
 	_ = currentWorkspace.save()
