@@ -76,14 +76,13 @@ var servicesCmd = &cobra.Command{
 }
 
 func getConfig(cmd *cobra.Command) (*config.Config, error) {
-	c, err := config.New()
+	region, _ := cmd.Flags().GetString("region")
+	environment, _ := cmd.Flags().GetString("env")
+	c, err := config.New(config.WithRegion(region), config.WithEnv(environment))
 	if err != nil {
 		return nil, err
 	}
-	region, _ := cmd.Flags().GetString("region")
-	environment, _ := cmd.Flags().GetString("environment")
-
-	return c.Region(region).Env(environment), nil
+	return c, nil
 }
 
 func init() {
