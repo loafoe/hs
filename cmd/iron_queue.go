@@ -40,6 +40,7 @@ var ironQueueCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
+			return
 		}
 		codeName := args[0]
 		if codeName == "" {
@@ -61,11 +62,11 @@ var ironQueueCmd = &cobra.Command{
 			return
 		}
 		client, err := iron.NewClient(config)
-		defer client.Close()
 		if err != nil {
 			fmt.Printf("error configuring iron client: %v\n", err)
 			return
 		}
+		defer client.Close()
 		if cluster == "" {
 			if len(config.ClusterInfo) == 0 {
 				fmt.Printf("no default cluster, must specify cluster ID explicitly for this command\n")
@@ -90,9 +91,9 @@ var ironQueueCmd = &cobra.Command{
 		}
 
 		task := iron.Task{
-			Cluster: cluster,
+			Cluster:  cluster,
 			CodeName: codeName,
-			Payload: taskData,
+			Payload:  taskData,
 		}
 		scheduledTask, _, err := client.Tasks.QueueTask(task)
 		if err != nil {
