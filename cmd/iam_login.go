@@ -24,6 +24,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -70,6 +71,38 @@ var iamLoginCmd = &cobra.Command{
 		e.HideBanner = true
 		redirectURI := "http://localhost:35444/callback"
 		loginSuccess := false
+		serviceID, _ := cmd.Flags().GetString("service-id")
+		if serviceID != "" {
+			privateKeyFile, _ := cmd.Flags().GetString("private-key-file")
+			key, err := ioutil.ReadFile(privateKeyFile)
+			if err != nil {
+				fmt.Printf("error reading private key: %v\n", err)
+				os.Exit(1)
+			}
+			err = iamClient.ServiceLogin(iam.Service{
+				ServiceID:  serviceID,
+				PrivateKey: string(key),
+			})
+			if err != nil {
+				fmt.Printf("error logging in: %v\n", err)
+				os.Exit(1)
+			}
+			introspect, _, err := iamClient.Introspect()
+			if err != nil {
+				fmt.Printf("error performing introspect: %v\n", err)
+				return
+			}
+			currentWorkspace.IAMAccessToken = iamClient.Token()
+			currentWorkspace.IAMIDToken = iamClient.IDToken()
+			currentWorkspace.IAMUserUUID = introspect.Sub
+			currentWorkspace.IAMRegion = region
+			currentWorkspace.IAMEnvironment = environment
+			currentWorkspace.IAMAccessTokenExpires = introspect.Expires
+			if err := currentWorkspace.save(); err != nil {
+				fmt.Printf("failed to save workspace: %v\n", err)
+			}
+			return
+		}
 		e.GET("/callback", func(c echo.Context) error {
 			code := c.QueryParam("code")
 			err := iamClient.CodeLogin(code, redirectURI)
@@ -133,4 +166,6 @@ var iamLoginCmd = &cobra.Command{
 
 func init() {
 	iamCmd.AddCommand(iamLoginCmd)
+	iamLoginCmd.Flags().String("service-id", "", "The service ID to use")
+	iamLoginCmd.Flags().String("private-key-file", "", "The file containing the private key")
 }
