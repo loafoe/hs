@@ -8,7 +8,7 @@ require (
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pelletier/go-toml v1.8.0 // indirect
-	github.com/philips-software/go-hsdp-api v0.39.2-0.20210610095111-261f81a3a0a0
+	github.com/philips-software/go-hsdp-api v0.39.2-0.20210615173133-a7fa64e5cb6a
 	github.com/philips-software/go-hsdp-signer v1.3.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v1.1.3
