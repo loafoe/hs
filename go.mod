@@ -7,7 +7,6 @@ require (
 	github.com/labstack/echo/v4 v4.3.0
 	github.com/manifoldco/promptui v0.8.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/pelletier/go-toml v1.8.0 // indirect
 	github.com/philips-software/go-hsdp-api v0.40.0
 	github.com/philips-software/go-hsdp-signer v1.3.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
