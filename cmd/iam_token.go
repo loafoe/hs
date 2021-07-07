@@ -63,7 +63,16 @@ var iamTokenCmd = &cobra.Command{
 			currentWorkspace.IAMAccessTokenExpires = iamClient.Expires()
 			_ = currentWorkspace.save()
 		}
-		fmt.Printf("%s\n", iamClient.Token())
+		if len(args) == 0 {
+			fmt.Printf("%s\n", iamClient.Token())
+			return
+		}
+		switch args[0] {
+		case "id":
+			fmt.Printf("%s\n", iamClient.IDToken())
+		case "refresh":
+			fmt.Printf("%s\n", iamClient.RefreshToken())
+		}
 	},
 }
 
