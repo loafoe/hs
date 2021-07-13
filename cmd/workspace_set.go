@@ -27,12 +27,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// workspaceSelectCmd represents the set command
-var workspaceSelectCmd = &cobra.Command{
-	Use:     "select <workspace>",
-	Aliases: []string{"s"},
-	Short:   "Select a different workspace",
-	Long:    `Selects a different workspace.`,
+// workspaceSetCmd represents the set command
+var workspaceSetCmd = &cobra.Command{
+	Use:     "set <workspace>",
+	Aliases: []string{"s", "select"},
+	Short:   "Sets a different workspace",
+	Long:    `Sets a different workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()
@@ -56,15 +56,15 @@ var workspaceSelectCmd = &cobra.Command{
 }
 
 func init() {
-	workspaceCmd.AddCommand(workspaceSelectCmd)
+	workspaceCmd.AddCommand(workspaceSetCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// workspaceSelectCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// workspaceSetCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// workspaceSelectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// workspaceSetCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
