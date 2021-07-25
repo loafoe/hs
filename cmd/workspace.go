@@ -80,6 +80,8 @@ type workspaceConfig struct {
 	UAAAccessTokenExpires int64       `json:"UAAAccessTokenExpires"`
 	UAAIDToken            string      `json:"UAAIDToken"`
 	PKILogicalPath        string      `json:"PKILogicalPath"`
+	TFStateCreds          string      `json:"TFStateCreds"`
+	TFStateInstanceURL    string      `json:"TFStateInstanceURL"`
 }
 
 func (w *workspaceConfig) iamExpireTime() *time.Time {
