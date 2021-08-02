@@ -608,8 +608,8 @@ github.com/pelletier/go-toml v1.9.3 h1:zeC5b1GviRUyKYd6OJPvBU/mcVDVoL1OhT17FCt5d
 github.com/pelletier/go-toml v1.9.3/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/peterbourgon/diskv v2.0.1+incompatible/go.mod h1:uqqh8zWWbv1HBMNONnaR/tNboyR3/BZd58JJSHlUSCU=
 github.com/philhofer/fwd v1.0.0/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
-github.com/philips-labs/terraform-backend-hsdp v0.0.10 h1:oKDhO5xheavwr7rhgv9BUoRekZfkXoFf078Ok0KncWE=
-github.com/philips-labs/terraform-backend-hsdp v0.0.10/go.mod h1:svIGXh0fZ5K4qTFuW7hdPVrojHT/LeF8ITFD/NgAkzU=
+github.com/philips-labs/terraform-backend-hsdp v0.1.0 h1:ckLncgeEB4or3Ri8DyOTeDWqqkuEePqBpYiGdU77G4k=
+github.com/philips-labs/terraform-backend-hsdp v0.1.0/go.mod h1:svIGXh0fZ5K4qTFuW7hdPVrojHT/LeF8ITFD/NgAkzU=
 github.com/philips-software/gautocloud-connectors v0.4.0/go.mod h1:k5VG78BLnDI75Ra5HzdkM8eYk0Sc7bLuwlOEn++j2Ic=
 github.com/philips-software/go-hsdp-api v0.20.0/go.mod h1:agJtsgjb1W4xq5cVUdk06uUVETKO1nKZAZJ4Y1Dumg4=
 github.com/philips-software/go-hsdp-api v0.26.1-0.20201208155559-7375257898d2/go.mod h1:HaEaF0bYLfcP2P5NKoVCevPZDnNQVr0Y9t/DzWvEGYM=
