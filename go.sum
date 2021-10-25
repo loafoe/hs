@@ -193,7 +193,7 @@ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7
 github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5/go.mod h1:a2zkGnVExMxdzMo3M0Hi/3sEU+cWnZpSni0O6/Yb/P0=
 github.com/evanphx/json-patch v4.2.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/evanphx/json-patch v4.5.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
-github.com/evanphx/json-patch/v5 v5.5.0/go.mod h1:G79N1coSVB93tBe7j6PhzjmR3/2VvlbKOFpnXhI9Bw4=
+github.com/evanphx/json-patch/v5 v5.6.0/go.mod h1:G79N1coSVB93tBe7j6PhzjmR3/2VvlbKOFpnXhI9Bw4=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/color v1.9.0/go.mod h1:eQcE1qtQxscV5RaZvpXrrb8Drkc3/DdQ+uUYCNjL+zU=
 github.com/fatih/structs v1.1.0/go.mod h1:9NiDSp5zOcgEDl+j00MP/WkGVPOlPRLejGD8Ga6PJ7M=
@@ -641,8 +641,8 @@ github.com/philips-labs/terraform-backend-hsdp v0.1.0/go.mod h1:svIGXh0fZ5K4qTFu
 github.com/philips-software/gautocloud-connectors v0.4.0/go.mod h1:k5VG78BLnDI75Ra5HzdkM8eYk0Sc7bLuwlOEn++j2Ic=
 github.com/philips-software/go-hsdp-api v0.20.0/go.mod h1:agJtsgjb1W4xq5cVUdk06uUVETKO1nKZAZJ4Y1Dumg4=
 github.com/philips-software/go-hsdp-api v0.26.1-0.20201208155559-7375257898d2/go.mod h1:HaEaF0bYLfcP2P5NKoVCevPZDnNQVr0Y9t/DzWvEGYM=
-github.com/philips-software/go-hsdp-api v0.46.2 h1:UYrhMgtcr28wMpz1hzQyY6t93LCXrNkLLYU3kSZxym0=
-github.com/philips-software/go-hsdp-api v0.46.2/go.mod h1:8hfBoJpL5XeQroML7P0kedYR6QNMFlbtd1qW85xMz/4=
+github.com/philips-software/go-hsdp-api v0.47.0 h1:N5ffXXjOYorlz3kOuiNv+pCazWIxrhORz+PhFn6gNOc=
+github.com/philips-software/go-hsdp-api v0.47.0/go.mod h1:+/oOyI8Equm7/YcUHJ+PO3HO4U92JcAAoOs5DYRRkIc=
 github.com/philips-software/go-hsdp-signer v1.3.0/go.mod h1:/QehZ/+Aks2t1TFpjhF/7ZSB8PJIIJHzLc03rOqwLw0=
 github.com/philips-software/go-hsdp-signer v1.4.0 h1:yg7UILhmI4xJhr/tQiAiQwJL0EZFvLuMqpH2GZ9ygY4=
 github.com/philips-software/go-hsdp-signer v1.4.0/go.mod h1:/QehZ/+Aks2t1TFpjhF/7ZSB8PJIIJHzLc03rOqwLw0=
