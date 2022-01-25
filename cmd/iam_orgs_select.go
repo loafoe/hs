@@ -42,9 +42,10 @@ var orgSelectTemplate = &promptui.SelectTemplates{
 
 // iamOrgsSelectCmd represents the select command
 var iamOrgsSelectCmd = &cobra.Command{
-	Use:   "select",
-	Short: "Select active organization",
-	Long:  `Selects the active organization.`,
+	Use:     "select",
+	Aliases: []string{"s"},
+	Short:   "Select active organization",
+	Long:    `Selects the active organization.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		iamClient, err := getIAMClient(cmd)
 		if err != nil {

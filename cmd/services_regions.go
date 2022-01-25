@@ -26,60 +26,47 @@ import (
 	"fmt"
 
 	"github.com/cheynewallace/tabby"
-	"github.com/philips-software/go-hsdp-api/iam"
+
 	"github.com/spf13/cobra"
 )
 
-// iamListGroupsCmd represents the listGroups command
-var iamListGroupsCmd = &cobra.Command{
-	Use:     "list",
-	Aliases: []string{"l"},
-	Short:   "List IAM groups",
-	Long:    `List all IAM groups.`,
+// servicesRegionsCmd represents the services command
+var servicesRegionsCmd = &cobra.Command{
+	Use:     "regions",
+	Aliases: []string{"r"},
+	Short:   "Retrieve region information",
+	Long:    `Retrieves region information.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		iamClient, err := getIAMClient(cmd)
+		config, err := getConfig(cmd)
 		if err != nil {
-			fmt.Printf("error initalizing IAM client: %v\n", err)
+			fmt.Printf("failed to get config: %v\n", err)
 			return
 		}
-		opts := &iam.GetGroupOptions{}
-		if name, err := cmd.Flags().GetString("name"); err == nil && name != "" {
-			opts.Name = &name
-		}
-		if org, err := cmd.Flags().GetString("org"); err == nil && org != "" {
-			opts.OrganizationID = &org
-		}
-		if opts.OrganizationID == nil || *opts.OrganizationID == "" {
-			if currentWorkspace.IAMSelectedOrg == "" {
-				fmt.Printf("Select an organization first\n")
+		regions := config.Regions()
+		if len(regions) == 0 {
+			if jsonOut {
+				fmt.Printf("[]\n")
 				return
 			}
-			opts.OrganizationID = &currentWorkspace.IAMSelectedOrg
-		}
-		groups, _, err := iamClient.Groups.GetGroups(opts)
-		if err != nil {
-			fmt.Printf("error retrieving groups: %v\n", err)
+			fmt.Printf("no regions found\n")
 			return
 		}
 		if jsonOut {
-			data, _ := json.Marshal(*groups)
-			fmt.Printf("%s\n", string(data))
+			data, _ := json.Marshal(regions)
+			fmt.Printf("%s\n", data)
 			return
 		}
 		t := tabby.New()
-		t.AddHeader("group", "id", "description")
-		for _, group := range *groups {
-			t.AddLine(group.GroupName,
-				group.ID,
-				group.GroupDescription)
+		t.AddHeader("regions")
+		for _, r := range regions {
+			t.AddLine(r)
 		}
 		t.Print()
-		_ = currentWorkspace.saveWithIAM(iamClient)
+
+		fmt.Printf("\n")
 	},
 }
 
 func init() {
-	iamGroupsCmd.AddCommand(iamListGroupsCmd)
-	iamListGroupsCmd.Flags().String("name", "", "Filter by name")
-	iamListGroupsCmd.Flags().String("org", "", "Filter by orgID")
+	servicesCmd.AddCommand(servicesRegionsCmd)
 }

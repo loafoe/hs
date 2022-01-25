@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/philips-software/go-hsdp-api/iam"
 
@@ -50,10 +51,20 @@ var iamIntrospectCmd = &cobra.Command{
 			fmt.Printf("error initializing IAM client: %v\n", err)
 			return
 		}
-		iamClient.SetTokens(currentWorkspace.IAMAccessToken,
+		tempToken := false
+		useExpires := time.Now().Add(30 * time.Minute).Unix()
+		useToken, _ := cmd.Flags().GetString("token")
+		if useToken != "" {
+			tempToken = true
+		} else {
+			useToken = currentWorkspace.IAMAccessToken
+			useExpires = currentWorkspace.IAMAccessTokenExpires
+		}
+
+		iamClient.SetTokens(useToken,
 			currentWorkspace.IAMRefreshToken,
 			currentWorkspace.IAMIDToken,
-			currentWorkspace.IAMAccessTokenExpires)
+			useExpires)
 		introspect, _, err := iamClient.Introspect()
 		if err != nil {
 			fmt.Printf("error performing introspect: %v\n", err)
@@ -64,7 +75,7 @@ var iamIntrospectCmd = &cobra.Command{
 			fmt.Printf("error marshalling introspect result: %v\n", err)
 			return
 		}
-		if introspect.Expires > currentWorkspace.IAMAccessTokenExpires {
+		if !tempToken && introspect.Expires > currentWorkspace.IAMAccessTokenExpires {
 			currentWorkspace.IAMAccessToken = iamClient.Token()
 			currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
 			currentWorkspace.IAMAccessTokenExpires = iamClient.Expires()
@@ -77,5 +88,6 @@ var iamIntrospectCmd = &cobra.Command{
 
 func init() {
 	iamCmd.AddCommand(iamIntrospectCmd)
+	iamIntrospectCmd.Flags().String("token", "", "Introspect this token")
 
 }

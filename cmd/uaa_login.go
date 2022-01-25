@@ -88,27 +88,32 @@ func persistUAACredentials(consoleClient *console.Client) {
 
 func credentials(username string, password string) (string, string, error) {
 	var err error
-	if username != "" && password != "" {
-		return username, password, nil
-	}
 	reader := bufio.NewReader(os.Stdin)
 
-	if username == "" {
-		fmt.Print("Enter Username: ")
-		username, err = reader.ReadString('\n')
-		if err != nil {
-			return "", "", err
-		}
+	fmt.Printf("Enter Username [%s]: ", username)
+	entered, err := reader.ReadString('\n')
+	if err != nil {
+		return username, password, err
 	}
-	if password == "" {
-		fmt.Print("Enter Password: ")
-		bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
-		if err != nil {
-			return "", "", err
-		}
-		password = string(bytePassword)
+	trimmedUsername := strings.TrimSpace(entered)
+	if trimmedUsername != "" {
+		username = trimmedUsername
 	}
-	return strings.TrimSpace(username), strings.TrimSpace(password), nil
+
+	masked := ""
+	if len(password) > 0 {
+		masked = "****"
+	}
+	fmt.Printf("Enter Password [%s]: ", masked)
+	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		return username, password, err
+	}
+	trimmedPassword := strings.TrimSpace(string(bytePassword))
+	if trimmedPassword != "" {
+		password = trimmedPassword
+	}
+	return username, password, nil
 }
 
 func init() {

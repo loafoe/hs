@@ -40,10 +40,22 @@ var tfstateCredsCmd = &cobra.Command{
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
 		address, _ := cmd.Flags().GetString("address")
-		address, err := tfstateAddress(address)
+		address, err := tfstateAddress(address, currentWorkspace.TFStateInstanceURL)
 		if err != nil {
 			fmt.Printf("error reading address: %v\n", err)
 			os.Exit(1)
+		}
+		data, err := base64.StdEncoding.DecodeString(currentWorkspace.TFStateCreds)
+		if err == nil {
+			parts := strings.Split(string(data), ":")
+			if len(parts) == 2 {
+				if username == "" {
+					username = parts[0]
+				}
+				if password == "" {
+					password = parts[1]
+				}
+			}
 		}
 		username, password, err = credentials(username, password)
 		fmt.Printf("\n")
@@ -61,19 +73,19 @@ func persistTFState(address, credentials string) {
 	_ = currentWorkspace.save()
 }
 
-func tfstateAddress(address string) (string, error) {
+func tfstateAddress(address, current string) (string, error) {
 	var err error
-	if address != "" {
-		return address, nil
-	}
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Address: ")
+	fmt.Printf("Address [%s]: ", current)
 	address, err = reader.ReadString('\n')
 	if err != nil {
-		return "", err
+		return current, err
 	}
-
+	trimmed := strings.TrimSpace(address)
+	if trimmed == "" {
+		return current, nil
+	}
 	return strings.TrimSpace(address), nil
 }
 

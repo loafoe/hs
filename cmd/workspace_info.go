@@ -29,9 +29,10 @@ import (
 
 // workspaceInfoCmd represents the info command
 var workspaceInfoCmd = &cobra.Command{
-	Use:   "info",
-	Short: "Information on current workspace",
-	Long:  `Shows detailed information on current workspace.`,
+	Use:     "info",
+	Aliases: []string{"i"},
+	Short:   "Information on current workspace",
+	Long:    `Shows detailed information on current workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Workspace name:            %s\n", currentWorkspace.Name)
 		fmt.Printf("Default region:            %s\n", currentWorkspace.DefaultRegion)
