@@ -76,7 +76,8 @@ var iamIntrospectCmd = &cobra.Command{
 			return
 		}
 		if !tempToken && introspect.Expires > currentWorkspace.IAMAccessTokenExpires {
-			currentWorkspace.IAMAccessToken = iamClient.Token()
+			token, _ := iamClient.Token()
+			currentWorkspace.IAMAccessToken = token
 			currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
 			currentWorkspace.IAMAccessTokenExpires = iamClient.Expires()
 			currentWorkspace.IAMIDToken = iamClient.IDToken()

@@ -193,7 +193,8 @@ func (w *workspaceConfig) delete(workspace string) error {
 }
 
 func (w *workspaceConfig) saveWithIAM(client *iam.Client) error {
-	w.IAMAccessToken = client.Token()
+	token, _ := client.Token()
+	w.IAMAccessToken = token
 	w.IAMRefreshToken = client.RefreshToken()
 	w.IAMAccessTokenExpires = client.Expires()
 	return w.save()

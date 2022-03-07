@@ -58,13 +58,15 @@ var iamTokenCmd = &cobra.Command{
 			return
 		}
 		if introspect.Expires > currentWorkspace.IAMAccessTokenExpires {
-			currentWorkspace.IAMAccessToken = iamClient.Token()
+			token, _ := iamClient.Token()
+			currentWorkspace.IAMAccessToken = token
 			currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
 			currentWorkspace.IAMAccessTokenExpires = iamClient.Expires()
 			_ = currentWorkspace.save()
 		}
 		if len(args) == 0 {
-			fmt.Printf("%s\n", iamClient.Token())
+			token, _ := iamClient.Token()
+			fmt.Printf("%s\n", token)
 			return
 		}
 		switch args[0] {

@@ -92,7 +92,8 @@ var iamLoginCmd = &cobra.Command{
 				fmt.Printf("error performing introspect: %v\n", err)
 				return
 			}
-			currentWorkspace.IAMAccessToken = iamClient.Token()
+			token, _ := iamClient.Token()
+			currentWorkspace.IAMAccessToken = token
 			currentWorkspace.IAMIDToken = iamClient.IDToken()
 			currentWorkspace.IAMUserUUID = introspect.Sub
 			currentWorkspace.IAMRegion = region
@@ -151,7 +152,8 @@ var iamLoginCmd = &cobra.Command{
 			return
 		}
 		fmt.Printf("logged in as: %s\n", introspect.Username)
-		currentWorkspace.IAMAccessToken = iamClient.Token()
+		token, _ := iamClient.Token()
+		currentWorkspace.IAMAccessToken = token
 		currentWorkspace.IAMRefreshToken = iamClient.RefreshToken()
 		currentWorkspace.IAMIDToken = iamClient.IDToken()
 		currentWorkspace.IAMUserUUID = introspect.Sub
