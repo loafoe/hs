@@ -27,9 +27,10 @@ import (
 
 // tfstateCmd represents the tfstate command
 var tfstateCmd = &cobra.Command{
-	Use:   "tfstate",
-	Short: "TFSTATE related commands",
-	Long:  `Supports the TFSTATE service.`,
+	Aliases: []string{"tf"},
+	Use:     "tfstate",
+	Short:   "TFSTATE related commands",
+	Long:    `Supports the TFSTATE service.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
