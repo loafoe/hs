@@ -7,7 +7,7 @@ require (
 	github.com/labstack/echo/v4 v4.7.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/philips-labs/terraform-backend-hsdp v0.2.0
+	github.com/philips-labs/terraform-backend-hsdp v0.2.1
 	github.com/philips-software/go-hsdp-api v0.61.9
 	github.com/philips-software/go-hsdp-signer v1.4.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
