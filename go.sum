@@ -497,7 +497,6 @@ github.com/hashicorp/vault/sdk v0.1.14-0.20200519221530-14615acda45f/go.mod h1:W
 github.com/hashicorp/vault/sdk v0.2.1/go.mod h1:WfUiO1vYzfBkz1TmoE4ZGU7HD0T0Cl/rZwaxjBkgN4U=
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hasura/go-graphql-client v0.2.0/go.mod h1:ovhXpnBL/+pYmmdYHndovgAc/wmhaXKvKwJETjtMomQ=
-github.com/hasura/go-graphql-client v0.6.2/go.mod h1:kvaJsDhxGbkIJ1jgebkrnt9EDIELZHpsAMint56v+2I=
 github.com/hasura/go-graphql-client v0.6.3/go.mod h1:kvaJsDhxGbkIJ1jgebkrnt9EDIELZHpsAMint56v+2I=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/hudl/fargo v1.4.0/go.mod h1:9Ai6uvFy5fQNq6VPKtg+Ceq1+eTY4nKUlR2JElEOcDo=
@@ -620,7 +619,7 @@ github.com/minio/md5-simd v1.1.1/go.mod h1:XpBqgZULrMYD3R+M28PcmP0CkI7PEMzB3U77Z
 github.com/minio/minio-go v0.0.0-20190131015406-c8a261de75c1/go.mod h1:vuvdOZLJuf5HmJAJrKV64MmozrSsk+or0PB5dzdfspg=
 github.com/minio/minio-go v6.0.14+incompatible/go.mod h1:7guKYtitv8dktvNUGrhzmNlA5wrAABTQXCoesZdFQO8=
 github.com/minio/minio-go/v7 v7.0.12/go.mod h1:S23iSP5/gbMwtxeY5FM71R+TkAYyzEdoNEDDwpt8yWs=
-github.com/minio/minio-go/v7 v7.0.21/go.mod h1:ei5JjmxwHaMrgsMrn4U/+Nmg+d8MKS1U2DAn1ou4+Do=
+github.com/minio/minio-go/v7 v7.0.23/go.mod h1:ei5JjmxwHaMrgsMrn4U/+Nmg+d8MKS1U2DAn1ou4+Do=
 github.com/minio/sha256-simd v0.1.1/go.mod h1:B5e1o+1/KgNmWrSQK08Y6Z1Vb5pwIktudl0J58iy0KM=
 github.com/mitchellh/cli v1.0.0/go.mod h1:hNIlj7HEI86fIcpObd7a0FcrxTWetlwJDGcceTlRvqc=
 github.com/mitchellh/cli v1.1.0/go.mod h1:xcISNoH86gajksDmfB23e/pu+B+GeFRMYmoHXxx3xhI=
@@ -693,11 +692,10 @@ github.com/pelletier/go-toml v1.9.4 h1:tjENF6MfZAg8e4ZmZTeWaWiT2vXtsoO6+iuOjFhEC
 github.com/pelletier/go-toml v1.9.4/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/peterbourgon/diskv v2.0.1+incompatible/go.mod h1:uqqh8zWWbv1HBMNONnaR/tNboyR3/BZd58JJSHlUSCU=
 github.com/philhofer/fwd v1.0.0/go.mod h1:gk3iGcWd9+svBvR0sR+KPcfE+RNWozjowpeBVG3ZVNU=
-github.com/philips-labs/terraform-backend-hsdp v0.2.0 h1:9Y26uDaCf7CQagwJhEFuJn1L5+T2IbR7kpGi0fPEz1s=
-github.com/philips-labs/terraform-backend-hsdp v0.2.0/go.mod h1:4TTk0AQLUEfvZnFVjpvOyEpqEbZNAliENZoNmc5vXII=
+github.com/philips-labs/terraform-backend-hsdp v0.2.1 h1:whqvE1PCjoqKoCZ3DMyIT4MQpk0IGAj+jBlA3GXCagA=
+github.com/philips-labs/terraform-backend-hsdp v0.2.1/go.mod h1:+36uU2QAwnA6jrb0hqhNnfmrqwFmV7EdTEYMIbQl3Ps=
 github.com/philips-software/gautocloud-connectors v0.6.0/go.mod h1:Y5ar+iEKrWQJFmHUUpUzPRGuwbj7+W8NCAUmioXPW1Q=
 github.com/philips-software/go-hsdp-api v0.42.3/go.mod h1:QmUPrNMEQBuVOVoBfw9zppqsweuaPNz3fIZAPaStLnY=
-github.com/philips-software/go-hsdp-api v0.60.0/go.mod h1:RgvTtgmmce+hzJh3dP2RfIrr9ySThHcTu0MC10F3VMg=
 github.com/philips-software/go-hsdp-api v0.61.9 h1:0qp8nf59uRp/gKvYnP+LV5k4K2QzRN+YWSHEuCu+ib4=
 github.com/philips-software/go-hsdp-api v0.61.9/go.mod h1:kQjabMa0ilLkFz+L5+zqqL19TocibkJVki3mQSXhlss=
 github.com/philips-software/go-hsdp-signer v1.3.0/go.mod h1:/QehZ/+Aks2t1TFpjhF/7ZSB8PJIIJHzLc03rOqwLw0=
