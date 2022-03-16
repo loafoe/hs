@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/cheynewallace/tabby v1.1.1
-	github.com/labstack/echo/v4 v4.7.1
+	github.com/labstack/echo/v4 v4.7.2
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/philips-labs/terraform-backend-hsdp v0.2.1
