@@ -12,6 +12,6 @@ require (
 	github.com/philips-software/go-hsdp-signer v1.4.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v1.4.0
-	github.com/spf13/viper v1.12.0
+	github.com/spf13/viper v1.13.0
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 )
