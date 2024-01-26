@@ -67,7 +67,5 @@ func readIronConfig(path ...string) (*iron.Config, error) {
 	if config.ProjectID == "" {
 		return nil, fmt.Errorf("invalid config: %v", config)
 	}
-	config.Debug = true
-	config.DebugLog = "/tmp/hs_iron.log"
 	return &config, nil
 }

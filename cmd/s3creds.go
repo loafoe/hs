@@ -62,7 +62,5 @@ func getCredentialsClient(cmd *cobra.Command, _ []string) (*s3creds.Client, erro
 	return s3creds.NewClient(iamClient, &s3creds.Config{
 		Region:      region,
 		Environment: environment,
-		Debug:       true,
-		DebugLog:    "/tmp/hs_credentials.log",
 	})
 }

@@ -73,7 +73,6 @@ var pkiListCmd = &cobra.Command{
 		pkiClient, err := pki.NewClient(consoleClient, iamClient, &pki.Config{
 			Region:      region,
 			Environment: environment,
-			DebugLog:    "/tmp/pki.log",
 		})
 		if err != nil {
 			fmt.Printf("error initializing PKI client: %v\n", err)

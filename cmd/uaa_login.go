@@ -60,7 +60,6 @@ var uaaLoginCmd = &cobra.Command{
 		}
 		consoleClient, err := console.NewClient(http.DefaultClient, &console.Config{
 			Region:   region,
-			DebugLog: "/tmp/console.log",
 		})
 		if err != nil {
 			fmt.Printf("error initializing CONSOLE client: %v\n", err)

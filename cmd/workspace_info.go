@@ -54,11 +54,6 @@ var workspaceInfoCmd = &cobra.Command{
 		fmt.Printf("IAM Selected Organization: %s (%s)\n",
 			currentWorkspace.IAMSelectedOrg,
 			currentWorkspace.IAMSelectedOrgName)
-		if currentWorkspace.HASConfig.HASURL != "" {
-			fmt.Printf("HAS Region:                %s\n", currentWorkspace.HASRegion)
-			fmt.Printf("HAS URL:                   %s\n", currentWorkspace.HASConfig.HASURL)
-
-		}
 		if currentWorkspace.UAAIDToken != "" {
 			loginStatus := "never logged in"
 			if expired := currentWorkspace.uaaExpireTime(); expired != nil {

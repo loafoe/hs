@@ -44,8 +44,6 @@ var iamIntrospectCmd = &cobra.Command{
 			Environment:    currentWorkspace.IAMEnvironment,
 			OAuth2ClientID: clientID,
 			OAuth2Secret:   clientSecret,
-			Debug:          true,
-			DebugLog:       "/tmp/hs_iam_introspect.log",
 		})
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)

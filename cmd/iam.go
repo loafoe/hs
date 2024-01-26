@@ -61,8 +61,6 @@ func getIAMClient(cmd *cobra.Command) (*iam.Client, error) {
 		Environment:    currentWorkspace.IAMEnvironment,
 		OAuth2ClientID: clientID,
 		OAuth2Secret:   clientSecret,
-		Debug:          true,
-		DebugLog:       "/tmp/hs_iam.log",
 	})
 	if err != nil {
 		return nil, fmt.Errorf("iam client: %w", err)

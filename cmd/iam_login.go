@@ -61,7 +61,6 @@ var iamLoginCmd = &cobra.Command{
 			Environment:    environment,
 			OAuth2ClientID: clientID,
 			OAuth2Secret:   clientSecret,
-			DebugLog:       "/tmp/hs_iam.log",
 		})
 		if err != nil {
 			fmt.Printf("error initializing IAM client: %v\n", err)

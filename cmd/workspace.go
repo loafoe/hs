@@ -35,7 +35,6 @@ import (
 	"github.com/philips-software/go-hsdp-api/iam"
 
 	"github.com/mitchellh/go-homedir"
-	"github.com/philips-software/go-hsdp-api/has"
 	"github.com/philips-software/go-hsdp-api/iron"
 	"github.com/spf13/cobra"
 )
@@ -71,8 +70,6 @@ type workspaceConfig struct {
 	IAMEnvironment        string      `json:"IAMEnvironment"`
 	IAMSelectedOrg        string      `json:"IAMSelectedOrg"`
 	IAMSelectedOrgName    string      `json:"IAMSelectedOrgName"`
-	HASRegion             string      `json:"HASRegion"`
-	HASConfig             has.Config  `json:"HASConfig"`
 	IronConfig            iron.Config `json:"IronConfig"`
 	S3CredsProductKey     string      `json:"S3CredsProductKey"`
 	UAAToken              string      `json:"UAAAccessToken"`
