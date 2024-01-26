@@ -1,8 +1,9 @@
+package cmd
+
 /*
 Copyright © 2022 Andy Lo-A-Foe
 
 */
-package cmd
 
 import (
 	"bytes"
