@@ -11,7 +11,7 @@ RUN GIT_COMMIT=$(git rev-parse --short HEAD) && \
     CGO_ENABLED=0 go build -o hs -ldflags "-X main.GitCommit=${GIT_COMMIT}"
 
 FROM alpine:latest
-RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+RUN apk update && apk add curl jq ca-certificates && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=builder /build/hs /app
 EXPOSE 35444
