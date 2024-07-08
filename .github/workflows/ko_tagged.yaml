@@ -37,7 +37,7 @@ jobs:
         name: KO setup
         uses: ko-build/setup-ko@v0.6
         env:
-          GOFLAGS: -ldflag="-X github.com/philips-labs/hs/cmd.clientID=${{ secrets.$CLIENT_ID }} -X github.com/philips-labs/hs/cmd.clientSecret=${{ secrets.CLIENT_SECRET }}"
+          GOFLAGS: -ldflag="-X github.com/philips-labs/hs/cmd.clientID=${{ secrets.CLIENT_ID }} -X github.com/philips-labs/hs/cmd.clientSecret=${{ secrets.CLIENT_SECRET }}"
           KO_DOCKER_REPO: ghcr.io/loafoe
       - 
         name: Build and push
