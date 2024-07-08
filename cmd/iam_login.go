@@ -56,6 +56,13 @@ var iamLoginCmd = &cobra.Command{
 			environment = currentWorkspace.DefaultEnvironment
 		}
 		serviceID, _ := cmd.Flags().GetString("service-id")
+		if serviceID == "" { // Try reading from file
+			serviceIdFile, _ := cmd.Flags().GetString("service-id-file")
+			content, err := os.ReadFile(serviceIdFile)
+			if err == nil {
+				serviceID = string(content)
+			}
+		}
 
 		if (clientID == "" || clientSecret == "") && serviceID == "" {
 			fmt.Printf("this feature only works with official binaries.\n")
@@ -183,5 +190,6 @@ var iamLoginCmd = &cobra.Command{
 func init() {
 	iamCmd.AddCommand(iamLoginCmd)
 	iamLoginCmd.Flags().String("service-id", "", "The service ID to use")
-	iamLoginCmd.Flags().String("private-key-file", "", "The file containing the private key")
+	iamLoginCmd.Flags().String("service-id-file", "", "A file containing the service id")
+	iamLoginCmd.Flags().String("private-key-file", "", "A file containing the private key")
 }

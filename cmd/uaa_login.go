@@ -59,7 +59,7 @@ var uaaLoginCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		consoleClient, err := console.NewClient(http.DefaultClient, &console.Config{
-			Region:   region,
+			Region: region,
 		})
 		if err != nil {
 			fmt.Printf("error initializing CONSOLE client: %v\n", err)
@@ -72,7 +72,7 @@ var uaaLoginCmd = &cobra.Command{
 		}
 		persistUAACredentials(consoleClient)
 		token, _ := consoleClient.Token()
-		fmt.Printf("%s\n", token)
+		fmt.Printf("%v\n", token)
 	},
 }
 
