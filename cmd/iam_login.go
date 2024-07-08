@@ -87,18 +87,20 @@ var iamLoginCmd = &cobra.Command{
 				fmt.Printf("error logging in: %v\n", err)
 				os.Exit(1)
 			}
-			introspect, _, err := iamClient.Introspect()
-			if err != nil {
-				fmt.Printf("error performing introspect: %v\n", err)
-				return
+			if clientID != "" {
+				introspect, _, err := iamClient.Introspect()
+				if err != nil {
+					fmt.Printf("error performing introspect: %v\n", err)
+					return
+				}
+				currentWorkspace.IAMUserUUID = introspect.Sub
+				currentWorkspace.IAMAccessTokenExpires = introspect.Expires
 			}
 			token, _ := iamClient.Token()
 			currentWorkspace.IAMAccessToken = token
 			currentWorkspace.IAMIDToken = iamClient.IDToken()
-			currentWorkspace.IAMUserUUID = introspect.Sub
 			currentWorkspace.IAMRegion = region
 			currentWorkspace.IAMEnvironment = environment
-			currentWorkspace.IAMAccessTokenExpires = introspect.Expires
 			if err := currentWorkspace.save(); err != nil {
 				fmt.Printf("failed to save workspace: %v\n", err)
 			}
