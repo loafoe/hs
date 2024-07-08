@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -35,6 +36,10 @@ import (
 	"github.com/pkg/browser"
 	"github.com/spf13/cobra"
 )
+
+type tokenOutput struct {
+	AccessToken string `json:"access_token"`
+}
 
 // dockerLoginCmd represents the login command
 var iamLoginCmd = &cobra.Command{
@@ -50,8 +55,9 @@ var iamLoginCmd = &cobra.Command{
 		if environment == "" {
 			environment = currentWorkspace.DefaultEnvironment
 		}
+		serviceID, _ := cmd.Flags().GetString("service-id")
 
-		if clientID == "" || clientSecret == "" {
+		if (clientID == "" || clientSecret == "") && serviceID == "" {
 			fmt.Printf("this feature only works with official binaries.\n")
 			return
 		}
@@ -66,7 +72,6 @@ var iamLoginCmd = &cobra.Command{
 			fmt.Printf("error initializing IAM client: %v\n", err)
 			os.Exit(1)
 		}
-		serviceID, _ := cmd.Flags().GetString("service-id")
 		if serviceID != "" { // Service Identity flow
 			privateKeyFile, _ := cmd.Flags().GetString("private-key-file")
 			key, err := os.ReadFile(privateKeyFile)
@@ -96,6 +101,10 @@ var iamLoginCmd = &cobra.Command{
 			currentWorkspace.IAMAccessTokenExpires = introspect.Expires
 			if err := currentWorkspace.save(); err != nil {
 				fmt.Printf("failed to save workspace: %v\n", err)
+			}
+			if jsonOut {
+				data, _ := json.Marshal(tokenOutput{token})
+				fmt.Printf("%s\n", string(data))
 			}
 			return
 		}
@@ -159,6 +168,10 @@ var iamLoginCmd = &cobra.Command{
 		currentWorkspace.IAMRegion = region
 		currentWorkspace.IAMEnvironment = environment
 		currentWorkspace.IAMAccessTokenExpires = introspect.Expires
+		if jsonOut {
+			data, _ := json.Marshal(tokenOutput{token})
+			fmt.Printf("%s\n", string(data))
+		}
 		if err := currentWorkspace.save(); err != nil {
 			fmt.Printf("failed to save workspace: %v\n", err)
 		}
