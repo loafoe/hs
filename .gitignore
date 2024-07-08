@@ -5,3 +5,4 @@ hs
 *.exe
 *.swp
 b.sh
+.secrets
