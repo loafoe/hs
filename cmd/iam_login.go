@@ -1,3 +1,5 @@
+package cmd
+
 /*
 Copyright © 2020 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
@@ -19,12 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package cmd
 
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -66,14 +66,10 @@ var iamLoginCmd = &cobra.Command{
 			fmt.Printf("error initializing IAM client: %v\n", err)
 			os.Exit(1)
 		}
-		e := echo.New()
-		e.HideBanner = true
-		redirectURI := "http://localhost:35444/callback"
-		loginSuccess := false
 		serviceID, _ := cmd.Flags().GetString("service-id")
-		if serviceID != "" {
+		if serviceID != "" { // Service Identity flow
 			privateKeyFile, _ := cmd.Flags().GetString("private-key-file")
-			key, err := ioutil.ReadFile(privateKeyFile)
+			key, err := os.ReadFile(privateKeyFile)
 			if err != nil {
 				fmt.Printf("error reading private key: %v\n", err)
 				os.Exit(1)
@@ -103,6 +99,10 @@ var iamLoginCmd = &cobra.Command{
 			}
 			return
 		}
+		e := echo.New()
+		e.HideBanner = true
+		redirectURI := "http://localhost:35444/callback"
+		loginSuccess := false
 		e.GET("/callback", func(c echo.Context) error {
 			code := c.QueryParam("code")
 			err := iamClient.CodeLogin(code, redirectURI)

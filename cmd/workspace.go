@@ -1,3 +1,5 @@
+package cmd
+
 /*
 Copyright © 2020 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
@@ -19,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package cmd
 
 import (
 	"encoding/json"
@@ -170,7 +171,7 @@ func currentWorkspaceName() string {
 		}
 	} else {
 		// Windows
-		data, err := ioutil.ReadFile(current)
+		data, err := os.ReadFile(current)
 		if err != nil {
 			return ""
 		}
@@ -213,7 +214,7 @@ func (w *workspaceConfig) save() error {
 func loadWorkspaceConfig(workspace string) (*workspaceConfig, error) {
 	newTarget := &workspaceConfig{}
 	newTarget.Name = workspace
-	data, err := ioutil.ReadFile(newTarget.configFile())
+	data, err := os.ReadFile(newTarget.configFile())
 	if err != nil {
 		return nil, err
 	}

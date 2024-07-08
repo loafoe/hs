@@ -1,3 +1,5 @@
+package cmd
+
 /*
 Copyright © 2020 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
@@ -19,12 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package cmd
 
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -55,7 +55,7 @@ func readIronConfig(path ...string) (*iron.Config, error) {
 	} else {
 		configFile = path[0]
 	}
-	data, err := ioutil.ReadFile(configFile)
+	data, err := os.ReadFile(configFile)
 	if err != nil {
 		return nil, err
 	}

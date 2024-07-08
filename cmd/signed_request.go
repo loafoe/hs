@@ -1,3 +1,5 @@
+package cmd
+
 /*
 Copyright © 2020 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
@@ -19,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package cmd
 
 import (
 	"bytes"
@@ -62,7 +63,7 @@ var signedRequestCmd = &cobra.Command{
 		if _, err := os.Stat(data); os.IsNotExist(err) {
 			bodyReader = strings.NewReader(data)
 		} else {
-			body, _ := ioutil.ReadFile(data)
+			body, _ := os.ReadFile(data)
 			bodyReader = bytes.NewReader(body)
 		}
 		req, _ := http.NewRequest(method, args[0], bodyReader)

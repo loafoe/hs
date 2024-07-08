@@ -1,3 +1,5 @@
+package cmd
+
 /*
 Copyright © 2020 Andy Lo-A-Foe <andy.lo-a-foe@philips.com>
 
@@ -19,12 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package cmd
 
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/philips-software/go-hsdp-api/iron"
 
@@ -48,7 +49,7 @@ var ironQueueCmd = &cobra.Command{
 			return
 		}
 		payloadFile, _ := cmd.Flags().GetString("payload")
-		payloadData, err := ioutil.ReadFile(payloadFile)
+		payloadData, err := os.ReadFile(payloadFile)
 		if err != nil {
 			fmt.Printf("error reading payload data: %v\n", err)
 			return
