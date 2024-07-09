@@ -15,4 +15,4 @@ RUN apk update && apk add curl jq ca-certificates && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=builder /build/hs /bin/hs
 EXPOSE 35444
-CMD ["/app/hs"]
+CMD ["/bin/hs"]
