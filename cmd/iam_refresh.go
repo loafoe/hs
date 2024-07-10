@@ -83,23 +83,28 @@ var iamRefreshCmd = &cobra.Command{
 			}
 
 			err := retry.Do(func() error {
+				var key Key
 				base64Key, err := os.ReadFile(keyFile)
 				if err != nil {
 					slog.Error("error reading private key", "error", err)
 					return err
 				}
-				var key Key
 				// Decode the base64 token
 				decoded, err := base64.StdEncoding.DecodeString(string(base64Key))
 				if err != nil {
-					slog.Error("error decoding key", "error", err)
-					return err
+					if unmarshalErr := json.Unmarshal(base64Key, &key); err != nil {
+						slog.Error("key error", "unmarshal", unmarshalErr, "error", err)
+						return err
+					}
+					// an already base64 decoded key was passed
+					decoded = base64Key
 				}
 				// Unmarshal the JSON data
 				if err := json.Unmarshal(decoded, &key); err != nil {
 					slog.Error("error unmarshalling key", "error", err)
 					return err
 				}
+
 				iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
 					Region:         key.Region,
 					Environment:    key.Environment,
