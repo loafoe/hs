@@ -60,8 +60,6 @@ var iamRefreshCmd = &cobra.Command{
 			Level: logLevel,
 		})))
 
-		region, _ := cmd.Flags().GetString("region")
-		environment, _ := cmd.Flags().GetString("environment")
 		every, _ := cmd.Flags().GetInt64("every")
 		clientId, _ := cmd.Flags().GetString("client-id")
 		clientSecret, _ := cmd.Flags().GetString("client-secret")
@@ -70,60 +68,52 @@ var iamRefreshCmd = &cobra.Command{
 			slog.Error("every must be > 0", "every", every)
 			return
 		}
-		if region == "" {
-			region = os.Getenv("HSP_IAM_REGION")
-		}
-		if environment == "" {
-			environment = os.Getenv("HSP_IAM_ENVIRONMENT")
-		}
-
-		iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
-			Region:         region,
-			Environment:    environment,
-			OAuth2ClientID: clientId,
-			OAuth2Secret:   clientSecret,
-		})
-		if err != nil {
-			slog.Error("error initializing IAM client", "error", err)
-			return
-		}
-
 		tokenExchangeIssuer, _ := cmd.Flags().GetString("token-exchange-issuer")
 		tokenFile, _ := cmd.Flags().GetString("token-file")
 		// Loop here
 		retries := 3
 
 		for {
-			serviceID, _ := cmd.Flags().GetString("service-id")
-			if serviceID == "" { // Try reading from file
-				serviceIdFile, _ := cmd.Flags().GetString("service-id-file")
-				content, err := os.ReadFile(serviceIdFile)
-				if err == nil {
-					serviceID = string(content)
-				}
-			}
 			connectorId, _ := cmd.Flags().GetString("connector-id")
-			privateKeyFile, _ := cmd.Flags().GetString("private-key-file")
+			keyFile, _ := cmd.Flags().GetString("key-file")
 
-			if privateKeyFile == "" {
-				slog.Error("private-key-file is required")
-				return
-			}
-			if serviceID == "" {
-				slog.Error("service-id is required")
+			if keyFile == "" {
+				slog.Error("key-file is required")
 				return
 			}
 
-			err = retry.Do(func() error {
-				key, err := os.ReadFile(privateKeyFile)
+			err := retry.Do(func() error {
+				base64Key, err := os.ReadFile(keyFile)
 				if err != nil {
 					slog.Error("error reading private key", "error", err)
 					return err
 				}
-				slog.Info("logging in", "serviceID", serviceID)
+				var key Key
+				// Decode the base64 token
+				decoded, err := base64.StdEncoding.DecodeString(string(base64Key))
+				if err != nil {
+					slog.Error("error decoding key", "error", err)
+					return err
+				}
+				// Unmarshal the JSON data
+				if err := json.Unmarshal(decoded, &key); err != nil {
+					slog.Error("error unmarshalling key", "error", err)
+					return err
+				}
+				iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
+					Region:         key.Region,
+					Environment:    key.Environment,
+					OAuth2ClientID: clientId,
+					OAuth2Secret:   clientSecret,
+				})
+				if err != nil {
+					slog.Error("error initializing IAM client", "error", err)
+					return err
+				}
+				slog.Info("logging in", "serviceID", key.ID)
 				err = iamClient.ServiceLogin(iam.Service{
-					ServiceID:  serviceID,
-					PrivateKey: string(key),
+					ServiceID:  key.ID,
+					PrivateKey: string(key.PrivateKey),
 				})
 				if err != nil {
 					slog.Error("error logging in", "error", err)
@@ -202,9 +192,7 @@ var iamRefreshCmd = &cobra.Command{
 func init() {
 	iamCmd.AddCommand(iamRefreshCmd)
 
-	iamRefreshCmd.Flags().String("service-id", "", "The service ID to use")
-	iamRefreshCmd.Flags().String("service-id-file", "", "A file containing the service id")
-	iamRefreshCmd.Flags().String("private-key-file", "", "A file containing the private key")
+	iamRefreshCmd.Flags().String("key-file", "", "A file containing the key")
 	iamRefreshCmd.Flags().Int64("every", 900, "Refresh every n seconds")
 	iamRefreshCmd.Flags().String("token-file", "token.txt", "The file to write the token to")
 	iamRefreshCmd.Flags().String("token-exchange-issuer", "", "Exchanges the token with the specified issuer")
