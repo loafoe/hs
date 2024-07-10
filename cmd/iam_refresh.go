@@ -50,6 +50,16 @@ var iamRefreshCmd = &cobra.Command{
 	Short: "Continuously refreshes a service identity token",
 	Long:  `Refreshes access token, useful for sidecar processes.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// Configure log output
+		logLevel := &slog.LevelVar{}
+		logLevel.Set(slog.LevelInfo)
+		if debug {
+			logLevel.Set(slog.LevelDebug)
+		}
+		slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: logLevel,
+		})))
+
 		region, _ := cmd.Flags().GetString("region")
 		environment, _ := cmd.Flags().GetString("environment")
 		every, _ := cmd.Flags().GetInt64("every")
