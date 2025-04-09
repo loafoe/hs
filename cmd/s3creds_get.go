@@ -25,7 +25,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/philips-software/go-hsdp-api/s3creds"
+	"github.com/dip-software/go-dip-api/s3creds"
 
 	"github.com/spf13/cobra"
 )

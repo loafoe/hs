@@ -28,7 +28,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/avast/retry-go/v4"
-	"github.com/philips-software/go-hsdp-api/iam"
+	"github.com/dip-software/go-dip-api/iam"
 	"io"
 	"log/slog"
 	"net/http"

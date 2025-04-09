@@ -27,7 +27,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/philips-software/go-hsdp-api/iam"
+	"github.com/dip-software/go-dip-api/iam"
 
 	"github.com/spf13/cobra"
 )

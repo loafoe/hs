@@ -27,7 +27,7 @@ import (
 
 	"github.com/cheynewallace/tabby"
 
-	"github.com/philips-software/go-hsdp-api/config"
+	"github.com/dip-software/go-dip-api/config"
 
 	"github.com/spf13/cobra"
 )

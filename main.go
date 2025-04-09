@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 package main
 
-import "github.com/philips-labs/hs/cmd"
+import "github.com/loafoe/hs/cmd"
 
 func main() {
 	cmd.Execute()

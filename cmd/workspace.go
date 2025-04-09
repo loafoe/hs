@@ -33,10 +33,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/philips-software/go-hsdp-api/iam"
+	"github.com/dip-software/go-dip-api/iam"
 
+	"github.com/dip-software/go-dip-api/iron"
 	"github.com/mitchellh/go-homedir"
-	"github.com/philips-software/go-hsdp-api/iron"
 	"github.com/spf13/cobra"
 )
 

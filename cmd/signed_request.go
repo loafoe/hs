@@ -32,7 +32,7 @@ import (
 	"os"
 	"strings"
 
-	signer "github.com/philips-software/go-hsdp-signer"
+	signer "github.com/dip-software/go-dip-signer"
 	"github.com/spf13/cobra"
 )
 

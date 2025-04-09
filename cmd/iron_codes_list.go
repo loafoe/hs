@@ -27,7 +27,7 @@ import (
 	"time"
 
 	"github.com/cheynewallace/tabby"
-	"github.com/philips-software/go-hsdp-api/iron"
+	"github.com/dip-software/go-dip-api/iron"
 
 	"github.com/spf13/cobra"
 )

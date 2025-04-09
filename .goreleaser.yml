@@ -23,7 +23,7 @@ builds:
     goarm:
       - 8
     ldflags:
-      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.buildSource=binaryRelease -X github.com/philips-labs/hs/cmd.clientID={{.Env.CLIENT_ID}} -X github.com/philips-labs/hs/cmd.clientSecret={{.Env.CLIENT_SECRET}}
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.buildSource=binaryRelease -X github.com/loafoe/hs/cmd.clientID={{.Env.CLIENT_ID}} -X github.com/loafoe/hs/cmd.clientSecret={{.Env.CLIENT_SECRET}}
 
 archives:
  - format: zip
