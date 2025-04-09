@@ -38,8 +38,18 @@ to quickly create a Cobra application.`,
 			fmt.Printf("error initalizing IAM client: %v\n", err)
 			return
 		}
-		iamClient.RevokeRefreshAccessToken()
-		iamClient.RevokeAccessToken()
+
+		// Check the error return values of RevokeRefreshAccessToken and RevokeAccessToken
+		err = iamClient.RevokeRefreshAccessToken()
+		if err != nil {
+			fmt.Printf("Error revoking refresh access token: %v\n", err)
+		}
+
+		err = iamClient.RevokeAccessToken()
+		if err != nil {
+			fmt.Printf("Error revoking access token: %v\n", err)
+		}
+
 		err = iamClient.EndSession()
 		if err == io.EOF {
 			fmt.Printf("Session ended\n")

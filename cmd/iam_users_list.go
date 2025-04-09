@@ -113,7 +113,7 @@ var iamUsersListCmd = &cobra.Command{
 	},
 }
 
-func fetchUser(client *iam.Client, workerID int, queue chan string, result chan *iam.User, done chan bool) {
+func fetchUser(client *iam.Client, _ int, queue chan string, result chan *iam.User, done chan bool) {
 	errorUser := &iam.User{
 		ID: "error",
 	}

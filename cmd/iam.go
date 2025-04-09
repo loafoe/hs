@@ -55,7 +55,7 @@ func init() {
 	// iamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func getIAMClient(cmd *cobra.Command) (*iam.Client, error) {
+func getIAMClient(_ *cobra.Command) (*iam.Client, error) {
 	iamClient, err := iam.NewClient(http.DefaultClient, &iam.Config{
 		Region:         currentWorkspace.IAMRegion,
 		Environment:    currentWorkspace.IAMEnvironment,

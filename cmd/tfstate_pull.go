@@ -75,7 +75,6 @@ var tfstatePullCmd = &cobra.Command{
 
 		data, _ := json.Marshal(state)
 		fmt.Printf("%s\n", pretty(data))
-		return
 	},
 }
 

@@ -29,7 +29,7 @@ import (
 	"strings"
 	"syscall"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 
 	"github.com/dip-software/go-dip-api/console"
 
@@ -43,12 +43,8 @@ var uaaLoginCmd = &cobra.Command{
 	Long:  `Login to the regional UAA endpoint.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		region, _ := cmd.Flags().GetString("region")
-		environment, _ := cmd.Flags().GetString("environment")
 		if region == "" {
 			region = currentWorkspace.DefaultRegion
-		}
-		if environment == "" {
-			environment = currentWorkspace.DefaultEnvironment
 		}
 		username, _ := cmd.Flags().GetString("username")
 		password, _ := cmd.Flags().GetString("password")
@@ -104,7 +100,7 @@ func credentials(username string, password string) (string, string, error) {
 		masked = "****"
 	}
 	fmt.Printf("Enter Password [%s]: ", masked)
-	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
+	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		return username, password, err
 	}

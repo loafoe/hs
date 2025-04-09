@@ -61,8 +61,6 @@ var iamUsersLookupCmd = &cobra.Command{
 		}
 		data, _ := json.Marshal(user)
 		fmt.Printf("%s\n", pretty(data))
-		return
-		_ = currentWorkspace.saveWithIAM(iamClient)
 	},
 }
 
