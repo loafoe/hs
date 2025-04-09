@@ -26,7 +26,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -93,7 +92,7 @@ var signedRequestCmd = &cobra.Command{
 		if resp == nil || resp.Body == nil {
 			fmt.Printf("response error\n")
 		}
-		respData, err := ioutil.ReadAll(resp.Body)
+		respData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Printf("error reading body: %v\n", err)
 			return

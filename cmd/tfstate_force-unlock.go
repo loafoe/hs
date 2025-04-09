@@ -26,12 +26,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/philips-labs/terraform-backend-hsdp/backend/types"
+	"github.com/loafoe/terraform-backend-hsdp/backend/types"
 	"github.com/spf13/cobra"
 )
 
@@ -74,7 +74,7 @@ var tfstateForceUnlockCmd = &cobra.Command{
 			os.Exit(1)
 		}
 		defer resp.Body.Close()
-		response, _ := ioutil.ReadAll(resp.Body)
+		response, _ := io.ReadAll(resp.Body)
 		if jsonOut {
 			fmt.Printf("%s\n", string(response))
 			return

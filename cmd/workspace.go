@@ -25,7 +25,6 @@ THE SOFTWARE.
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -205,7 +204,7 @@ func (w *workspaceConfig) save() error {
 	if err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(w.configFile(), data, 0600); err != nil {
+	if err := os.WriteFile(w.configFile(), data, 0600); err != nil {
 		return err
 	}
 	return nil
@@ -242,7 +241,7 @@ func (w *workspaceConfig) setDefault(workspace string) error {
 		}
 	} else {
 		// Windows
-		if err := ioutil.WriteFile(current, []byte(w.configFile()), 0600); err != nil {
+		if err := os.WriteFile(current, []byte(w.configFile()), 0600); err != nil {
 			return err
 		}
 	}
@@ -286,7 +285,7 @@ func ensureDefault() {
 			}
 		} else {
 			// Windows
-			if err := ioutil.WriteFile(currentWorkspaceFile, []byte("default.config.json"), 0600); err != nil {
+			if err := os.WriteFile(currentWorkspaceFile, []byte("default.config.json"), 0600); err != nil {
 				fmt.Printf("Failed to set default workspace: %v\n", err)
 				os.Exit(1)
 			}
