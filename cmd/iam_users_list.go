@@ -46,19 +46,77 @@ var iamUsersListCmd = &cobra.Command{
 			fmt.Printf("please select an organization first using: hs iam orgs select\n")
 			return
 		}
-		pageSize := "50" // TODO: implement paging
-		users, _, err := iamClient.Users.GetUsers(&iam.GetUserOptions{
-			OrganizationID: &currentWorkspace.IAMSelectedOrg,
-			PageSize:       &pageSize,
-		})
-		if err != nil {
-			fmt.Printf("error performing IAM introspect: %v\n", err)
-			return
+
+		// Get pagination flags
+		pageSize, _ := cmd.Flags().GetInt("page-size")
+		if pageSize <= 0 {
+			pageSize = 50
 		}
-		if !jsonOut {
-			fmt.Printf("Users in Organization: %s\n\n", currentWorkspace.IAMSelectedOrgName)
+		pageSizeStr := fmt.Sprintf("%d", pageSize)
+
+		pageNum, _ := cmd.Flags().GetInt("page")
+		if pageNum <= 0 {
+			pageNum = 1
 		}
-		if len(users.UserUUIDs) == 0 {
+		pageNumStr := fmt.Sprintf("%d", pageNum)
+
+		allPages, _ := cmd.Flags().GetBool("all")
+
+		// Results storage
+		var allUsers []*iam.User
+		var allUserUUIDs []string
+
+		// If we want all pages, iterate until no more results
+		if allPages {
+			currentPage := 1
+			hasMorePages := true
+
+			for hasMorePages {
+				currentPageStr := fmt.Sprintf("%d", currentPage)
+				users, _, err := iamClient.Users.GetUsers(&iam.GetUserOptions{
+					OrganizationID: &currentWorkspace.IAMSelectedOrg,
+					PageSize:       &pageSizeStr,
+					PageNumber:     &currentPageStr,
+				})
+
+				if err != nil {
+					fmt.Printf("error fetching users page %d: %v\n", currentPage, err)
+					return
+				}
+
+				if len(users.UserUUIDs) == 0 {
+					hasMorePages = false
+				} else {
+					allUserUUIDs = append(allUserUUIDs, users.UserUUIDs...)
+					currentPage++
+				}
+			}
+
+			if !jsonOut {
+				fmt.Printf("Users in Organization: %s (All Pages)\n\n", currentWorkspace.IAMSelectedOrgName)
+			}
+		} else {
+			// Just get a single page
+			users, _, err := iamClient.Users.GetUsers(&iam.GetUserOptions{
+				OrganizationID: &currentWorkspace.IAMSelectedOrg,
+				PageSize:       &pageSizeStr,
+				PageNumber:     &pageNumStr,
+			})
+
+			if err != nil {
+				fmt.Printf("error fetching users: %v\n", err)
+				return
+			}
+
+			allUserUUIDs = users.UserUUIDs
+
+			if !jsonOut {
+				fmt.Printf("Users in Organization: %s (Page %s, Size %s)\n\n",
+					currentWorkspace.IAMSelectedOrgName, pageNumStr, pageSizeStr)
+			}
+		}
+
+		if len(allUserUUIDs) == 0 {
 			if jsonOut {
 				fmt.Printf("[]\n")
 				return
@@ -66,8 +124,9 @@ var iamUsersListCmd = &cobra.Command{
 			fmt.Printf("no users found or not enough permissions\n")
 			return
 		}
+
 		numWorkers := 10
-		numUsers := len(users.UserUUIDs)
+		numUsers := len(allUserUUIDs)
 		if numWorkers > numUsers {
 			numWorkers = numUsers
 		}
@@ -80,7 +139,7 @@ var iamUsersListCmd = &cobra.Command{
 		}
 		// Fill queue
 		go func() {
-			for _, uuid := range users.UserUUIDs {
+			for _, uuid := range allUserUUIDs {
 				queue <- uuid
 			}
 		}()
@@ -102,6 +161,7 @@ var iamUsersListCmd = &cobra.Command{
 		t.AddHeader("loginID", "first name", "last name", "email")
 		for i := 0; i < numUsers; i++ {
 			user := <-result
+			allUsers = append(allUsers, user) // nolint
 			t.AddLine(user.LoginID, user.Name.Given, user.Name.Family, user.EmailAddress)
 		}
 		t.Print()
@@ -134,4 +194,9 @@ func fetchUser(client *iam.Client, _ int, queue chan string, result chan *iam.Us
 
 func init() {
 	iamUsersCmd.AddCommand(iamUsersListCmd)
+
+	// Add pagination flags
+	iamUsersListCmd.Flags().Int("page-size", 50, "Number of users per page")
+	iamUsersListCmd.Flags().Int("page", 1, "Page number to retrieve")
+	iamUsersListCmd.Flags().Bool("all", false, "Fetch all pages")
 }
