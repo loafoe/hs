@@ -27,14 +27,15 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/avast/retry-go/v4"
-	"github.com/dip-software/go-dip-api/iam"
 	"io"
 	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/avast/retry-go/v4"
+	"github.com/dip-software/go-dip-api/iam"
 
 	"github.com/spf13/cobra"
 )
@@ -155,7 +156,10 @@ var iamRefreshCmd = &cobra.Command{
 					if err != nil {
 						return err
 					}
-					defer resp.Body.Close()
+					defer func() {
+						_ = resp.Body.Close()
+					}()
+
 					// Read and print the response body
 					body, err := io.ReadAll(resp.Body)
 					if err != nil {

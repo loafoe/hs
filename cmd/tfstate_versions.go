@@ -57,7 +57,10 @@ var tfstateVersionsCmd = &cobra.Command{
 			fmt.Printf("error fetch list: %v\n", err)
 			os.Exit(1)
 		}
-		defer resp.Body.Close()
+		defer func() {
+			_ = resp.Body.Close()
+		}()
+
 		versions := make([]string, 0)
 
 		if err := json.NewDecoder(resp.Body).Decode(&versions); err != nil {

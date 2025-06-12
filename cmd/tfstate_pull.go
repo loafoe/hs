@@ -55,7 +55,10 @@ var tfstatePullCmd = &cobra.Command{
 			fmt.Printf("error fetch list: %v\n", err)
 			os.Exit(1)
 		}
-		defer resp.Body.Close()
+		defer func() {
+			_ = resp.Body.Close()
+		}()
+
 		var state map[string]interface{}
 
 		switch resp.StatusCode {
