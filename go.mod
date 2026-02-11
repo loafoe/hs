@@ -5,7 +5,7 @@ go 1.24.1
 toolchain go1.24.2
 
 require (
-	github.com/avast/retry-go/v4 v4.6.0
+	github.com/avast/retry-go/v4 v4.7.0
 	github.com/cheynewallace/tabby v1.1.1
 	github.com/dip-software/go-dip-api v0.91.0
 	github.com/dip-software/go-dip-signer v1.6.0
