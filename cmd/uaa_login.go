@@ -31,7 +31,7 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/dip-software/go-dip-api/console"
+	"github.com/philips-software/go-dip-api/console"
 
 	"github.com/spf13/cobra"
 )

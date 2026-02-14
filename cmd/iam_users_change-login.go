@@ -24,7 +24,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/dip-software/go-dip-api/iam"
+	"github.com/philips-software/go-dip-api/iam"
 
 	"github.com/spf13/cobra"
 )

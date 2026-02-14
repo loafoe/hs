@@ -26,7 +26,7 @@ import (
 	"fmt"
 
 	"github.com/cheynewallace/tabby"
-	"github.com/dip-software/go-dip-api/iron"
+	"github.com/philips-software/go-dip-api/iron"
 
 	"github.com/spf13/cobra"
 )

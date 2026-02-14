@@ -32,9 +32,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dip-software/go-dip-api/iam"
+	"github.com/philips-software/go-dip-api/iam"
 
-	"github.com/dip-software/go-dip-api/iron"
+	"github.com/philips-software/go-dip-api/iron"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
@@ -71,7 +71,6 @@ type workspaceConfig struct {
 	IAMSelectedOrg        string      `json:"IAMSelectedOrg"`
 	IAMSelectedOrgName    string      `json:"IAMSelectedOrgName"`
 	IronConfig            iron.Config `json:"IronConfig"`
-	S3CredsProductKey     string      `json:"S3CredsProductKey"`
 	UAAToken              string      `json:"UAAAccessToken"`
 	UAARefreshToken       string      `json:"UAARefreshToken"`
 	UAAAccessTokenExpires int64       `json:"UAAAccessTokenExpires"`

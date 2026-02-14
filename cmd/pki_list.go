@@ -24,8 +24,8 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dip-software/go-dip-api/console"
-	"github.com/dip-software/go-dip-api/pki"
+	"github.com/philips-software/go-dip-api/console"
+	"github.com/philips-software/go-dip-api/pki"
 	"net/http"
 	"os"
 

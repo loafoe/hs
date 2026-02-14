@@ -35,7 +35,7 @@ import (
 	"time"
 
 	"github.com/avast/retry-go/v4"
-	"github.com/dip-software/go-dip-api/iam"
+	"github.com/philips-software/go-dip-api/iam"
 
 	"github.com/spf13/cobra"
 )

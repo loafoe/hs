@@ -30,7 +30,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/dip-software/go-dip-api/iam"
+	"github.com/philips-software/go-dip-api/iam"
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/browser"
