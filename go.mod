@@ -7,7 +7,7 @@ toolchain go1.24.2
 require (
 	github.com/avast/retry-go/v4 v4.7.0
 	github.com/cheynewallace/tabby v1.1.1
-	github.com/labstack/echo/v4 v4.15.0
+	github.com/labstack/echo/v4 v4.15.1
 	github.com/loafoe/terraform-backend-hsdp v0.9.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mitchellh/go-homedir v1.1.0
