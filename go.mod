@@ -11,7 +11,7 @@ require (
 	github.com/loafoe/terraform-backend-hsdp v0.9.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/philips-software/go-dip-api v0.96.0
+	github.com/philips-software/go-dip-api v0.97.0
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
