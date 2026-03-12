@@ -69,8 +69,8 @@ github.com/mitchellh/go-homedir v1.1.0 h1:lukF9ziXFxDFPkA1vsr5zpc1XuPDn/wFntq5mG
 github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/pelletier/go-toml/v2 v2.2.4 h1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=
 github.com/pelletier/go-toml/v2 v2.2.4/go.mod h1:2gIqNv+qfxSVS7cM2xJQKtLSTLUE9V8t9Stt+h56mCY=
-github.com/philips-software/go-dip-api v0.97.0 h1:ai9LAuSrmeyKnchtr/8MZQvo5YUtrI5rNY38oadVc0U=
-github.com/philips-software/go-dip-api v0.97.0/go.mod h1:iBhVUpv31eT7G0UAPasj9Ywe/9r5Si0tiuGAGD9B9Js=
+github.com/philips-software/go-dip-api v0.97.1 h1:IQmgmwkwxqTGhERkUDGPIGWF1bOQfTK87ScmOABfB/w=
+github.com/philips-software/go-dip-api v0.97.1/go.mod h1:iBhVUpv31eT7G0UAPasj9Ywe/9r5Si0tiuGAGD9B9Js=
 github.com/philips-software/go-nih-signer v1.5.0 h1:qMQ2uArwgnSCbZV7GvuiN4cyHLFXqpVFojQKIiF24tE=
 github.com/philips-software/go-nih-signer v1.5.0/go.mod h1:lJQZASlfNi8XiJjEIz/xjdumb7wWU8RuSETQjlaU1f4=
 github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4 h1:49lOXmGaUpV9Fz3gd7TFZY106KVlPVa5jcYD1gaQf98=
