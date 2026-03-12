@@ -1,8 +1,6 @@
 module github.com/loafoe/hs
 
-go 1.24.1
-
-toolchain go1.24.2
+go 1.25.0
 
 require (
 	github.com/avast/retry-go/v4 v4.7.0
@@ -15,7 +13,7 @@ require (
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
-	golang.org/x/term v0.40.0
+	golang.org/x/term v0.41.0
 )
 
 require (
@@ -51,7 +49,7 @@ require (
 	golang.org/x/crypto v0.46.0 // indirect
 	golang.org/x/net v0.48.0 // indirect
 	golang.org/x/oauth2 v0.35.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
